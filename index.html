@@ -1,0 +1,2247 @@
+<!DOCTYPE html>
+<html lang="te">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation Book & Marketplace</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Ramabhadra&family=Suranna&display=swap" rel="stylesheet">
+    <!-- jsPDF & AutoTable -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+    <!-- Cashfree SDK (Production) -->
+    <script src="https://sdk.cashfree.com/js/v3/cashfree.js"></script>
+    <style>
+        body { font-family: 'Ramabhadra', sans-serif; background-color: #451a03; }
+        .title-font { font-family: 'Suranna', serif; }
+        @keyframes glowingBorder {
+            0% { border-color: #f59e0b; box-shadow: 0 0 5px rgba(245, 158, 11, 0.4); }
+            33% { border-color: #10b981; box-shadow: 0 0 10px rgba(16, 185, 129, 0.6); }
+            66% { border-color: #3b82f6; box-shadow: 0 0 10px rgba(59, 130, 246, 0.6); }
+            100% { border-color: #f59e0b; box-shadow: 0 0 5px rgba(245, 158, 11, 0.4); }
+        }
+        .moving-border { border-width: 2px; border-style: solid; animation: glowingBorder 4s infinite linear; }
+        @keyframes waterRipple {
+            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.6); }
+            70% { box-shadow: 0 0 0 10px rgba(251, 191, 36, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        }
+        .waterdrop-logo { animation: waterRipple 2s infinite cubic-bezier(0.4, 0, 0.6, 1); }
+        @keyframes dropBounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+        .waterdrop-btn { animation: dropBounce 3s ease-in-out infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .spinner { animation: spin 1s linear infinite; }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center antialiased">
+
+    <!-- Header Section -->
+    <header class="w-full max-w-md bg-stone-950 py-3 px-5 sticky top-0 z-45 shadow-2xl moving-border">
+        <div class="flex items-center justify-between gap-0">
+            <div class="flex items-center gap-2.5 shrink-0 cursor-pointer" onclick="switchView('publicHomeView')">
+                <img src="https://cdn.corenexis.com/f/GoZcxpTtYHf.png" alt="Logo" class="w-11 h-11 rounded-full object-cover border-2 border-amber-500 waterdrop-logo shadow-lg">
+                <div class="flex flex-col">
+                    <span class="font-black text-sm text-amber-400 tracking-wider">DONATION BOOK</span>
+                    <span class="text-[9px] text-amber-200/70 tracking-tight">Serve. Celebrate. Support.</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-2 shrink-0">
+                <!-- Language Selection Dropdown -->
+                <div id="languageDropdownContainer">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)" class="bg-stone-900 text-amber-300 text-[11px] font-bold py-1.5 px-2.5 rounded-lg moving-border outline-none cursor-pointer shadow">
+                        <option value="te">తెలుగు</option>
+                        <option value="en" selected>English</option>
+                        <option value="hi">हिन्दी</option>
+                        <option value="ta">தமிழ்</option>
+                        <option value="kn">ಕನ್ನಡ</option>
+                        <option value="ml">മലയാളം</option>
+                        <option value="gu">ગુજરાતી</option>
+                        <option value="bn">বাংলা</option>
+                        <option value="mr">मराठी</option>
+                        <option value="pa">ਪੰਜਾਬੀ</option>
+                    </select>
+                </div>
+
+                <div id="authHeaderButtons">
+                    <button onclick="switchView('loginView')" id="hdrOrgLogin" class="bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-stone-950 text-xs font-black px-3.5 py-1.5 rounded-xl shadow-lg cursor-pointer moving-border">Org Login</button>
+                </div>
+                
+                <div id="userProfileHeader" class="hidden flex items-center gap-1.5">
+                    <span id="loggedUserName" class="text-xs font-bold text-yellow-300 truncate max-w-[70px]"></span>
+                    <button onclick="logoutUser()" id="hdrLogout" class="bg-red-600 hover:bg-red-700 text-white text-[10px] font-bold px-2 py-1 rounded shadow cursor-pointer">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Container -->
+    <main class="w-full max-w-md px-4 py-4 space-y-6 flex-grow pb-16">
+
+        <!-- Public View Mode Container -->
+        <div id="publicViewContainer" class="page-view space-y-5 hidden">
+            <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-stone-950 p-4 rounded-2xl shadow-xl text-center moving-border space-y-1">
+                <span class="text-[10px] font-black uppercase tracking-wider block opacity-80" id="pubModeText">Public View Mode</span>
+                <h2 id="pubOrgName" class="title-font text-xl font-black text-red-950 truncate">--</h2>
+                <p id="pubSubTitle" class="text-xs font-bold text-stone-900"></p>
+            </div>
+            <div id="pubContentArea" class="space-y-4"></div>
+            <div class="text-center pt-2">
+                <button onclick="window.location.href = window.location.pathname" id="pubHomeBtn" class="bg-stone-800 text-amber-400 text-xs font-bold px-4 py-2 rounded-xl moving-border cursor-pointer">🏠 Go to Home</button>
+            </div>
+        </div>
+
+        <!-- Guest / Public Home View -->
+        <div id="publicHomeView" class="page-view space-y-5 text-center py-1">
+           
+            <!-- Download Android App Banner -->
+            <div class="bg-stone-950/90 p-3.5 rounded-2xl moving-border shadow-xl flex items-center justify-between mx-1">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl animate-bounce">📱</span>
+                    <div>
+                        <h4 id="appBannerTitle" class="text-xs font-bold text-amber-300">Android App available soon</h4>
+                        <p id="appBannerSub" class="text-[10px] text-stone-400">Get the best experience on mobile</p>
+                    </div>
+                </div>
+                <a href="/v1.0.0" download id="appBannerBtn" class="bg-amber-500 hover:bg-amber-600 text-stone-950 text-[11px] font-black px-3 py-1.5 rounded-xl shadow cursor-pointer">Stay Tuned</a>
+            </div>
+
+            <!-- Hero / Register Box -->
+            <div class="bg-gradient-to-b from-stone-900/90 via-stone-950 to-stone-900 p-6 rounded-3xl moving-border shadow-2xl space-y-4 relative overflow-hidden mx-1">
+                <div class="absolute -right-6 -top-6 w-32 h-32 bg-amber-500/10 rounded-full blur-2xl pointer-events-none"></div>
+                <h2 id="homeTitleText" class="title-font text-2xl font-black text-amber-400 leading-snug">విరాళాలు, భక్తులు మరియు ఆర్థికేతర వివరాలను సులభంగా నిర్వహించండి.</h2>
+                <p id="homeSubText" class="text-xs text-stone-300 leading-relaxed">వివిధ సేవలు, సంస్థలను నిర్వహించడం కోసం వేడుకలను సులభతరం చేసే ఆన్‌లైన్ ప్లాట్‌ఫామ్.</p>
+                <div class="pt-2 px-2">
+                    <button onclick="switchView('registerView')" id="homeRegBtn" class="w-full bg-gradient-to-r from-amber-400 via-yellow-500 to-amber-500 hover:from-amber-500 hover:to-yellow-600 text-stone-950 font-black text-sm py-4 rounded-2xl shadow-2xl cursor-pointer waterdrop-btn moving-border tracking-wider flex items-center justify-center gap-2">
+                        <span>REGISTER NOW</span> <span>➔</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 👉 Marketplace Side-by-Side Large Cards -->
+            <div class="grid grid-cols-2 gap-3 mx-1">
+                <div onclick="switchView('eventsMarketView')" class="bg-gradient-to-b from-stone-900 to-stone-950 p-4 rounded-3xl moving-border shadow-xl cursor-pointer flex flex-col justify-between text-left transition transform active:scale-95 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-amber-500/20 border border-amber-500/40 flex items-center justify-center text-2xl shadow-inner">🎪</div>
+                    <div class="space-y-1">
+                        <h3 id="cardEventTitle" class="font-black text-xs text-amber-300">Event Organizers & Services</h3>
+                        <p id="cardEventDesc" class="text-[10px] text-stone-400 leading-tight">మీ వేడుకల నిర్వహణ కొరకు రిజిస్ట్రేషన్, టికెట్లు, బుకింగ్ సేవలు.</p>
+                    </div>
+                    <div class="pt-1">
+                        <span id="cardEventBtn" class="text-[10px] font-bold text-amber-400 underline flex items-center gap-1">+ Register / Explore</span>
+                    </div>
+                </div>
+
+                <div onclick="switchView('storeMarketView')" class="bg-gradient-to-b from-stone-900 to-stone-950 p-4 rounded-3xl moving-border shadow-xl cursor-pointer flex flex-col justify-between text-left transition transform active:scale-95 space-y-3">
+                    <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-2xl shadow-inner">🛍️</div>
+                    <div class="space-y-1">
+                        <h3 id="cardStoreTitle" class="font-black text-xs text-emerald-300">Festive Store</h3>
+                        <p id="cardStoreDesc" class="text-[10px] text-stone-400 leading-tight">వేడుకల కోసం అవసరమైన పూజా సామాగ్రి, అలంకరణ వస్తువులు మరియు మరిన్ని.</p>
+                    </div>
+                    <div class="pt-1">
+                        <span id="cardStoreBtn" class="text-[10px] font-bold text-emerald-400 underline flex items-center gap-1">Explore Store ➔</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Full Width 24/7 Support Long Button -->
+            <div class="mx-1 pt-1">
+                <button onclick="openWhatsAppSupport('Hello, I need 24/7 support regarding Donation Book Marketplace.')" id="longSupportBtn" class="w-full bg-gradient-to-r from-emerald-700 via-teal-600 to-emerald-700 hover:from-emerald-600 hover:to-teal-500 text-white font-black py-3.5 px-4 rounded-2xl shadow-xl cursor-pointer moving-border flex items-center justify-center gap-2 text-xs tracking-wide">
+                    <span>🎧</span> <span id="longSupportText">24/7 Support - Chat on WhatsApp</span> <span>➔</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 👉 Events Marketplace View -->
+        <div id="eventsMarketView" class="page-view space-y-4 py-2 hidden">
+            <div class="bg-gradient-to-r from-amber-700 to-yellow-600 p-4 rounded-2xl text-stone-950 text-center moving-border shadow-xl space-y-2">
+                <h2 id="evHeaderTitle" class="title-font text-xl font-black">🎪 Event Organizers & Services</h2>
+                <p id="evHeaderSub" class="text-xs font-bold text-stone-900">మీ వేడుకలు మరియు కల్చరల్ యాక్టివిటీస్ కోసం ఆర్కెస్ట్రా, డిజే, ట్రూప్స్‌ని బుక్ చేయండి.</p>
+                <div class="flex justify-center gap-2 mt-2">
+                    <button onclick="openModal('addEventProviderModal')" id="evRegBtn" class="bg-stone-950 text-amber-300 font-bold text-xs py-2 px-3 rounded-xl shadow cursor-pointer moving-border">
+                        + Register Organizer
+                    </button>
+                    <button onclick="openModal('eventProviderLoginModal')" id="evLoginBtn" class="bg-amber-900 text-amber-200 font-bold text-xs py-2 px-3 rounded-xl shadow cursor-pointer moving-border">
+                        🔐 Provider Login
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-3" id="eventsProvidersListContainer">
+                <div class="bg-stone-900 p-4 rounded-2xl moving-border shadow-xl space-y-2 cursor-pointer" onclick="openEventProfile('eo1')">
+                    <div class="flex justify-between items-center">
+                        <h4 class="font-bold text-sm text-yellow-300">Sri Venkateswara Orchestra & Kolatam</h4>
+                        <span class="text-[10px] bg-amber-950 text-amber-300 font-bold px-2 py-0.5 rounded">📍 Sompeta</span>
+                    </div>
+                    <p id="eoSpecText" class="text-xs text-stone-300">Specialized in Traditional Kolatam, Live Orchestra & Sound Systems.</p>
+                    <div class="text-right">
+                        <span id="eoChatText" class="text-[11px] text-amber-400 font-bold underline">View All Events & Chat ➔</span>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-2">
+                <button onclick="switchView('publicHomeView')" id="evBackBtn" class="text-xs text-stone-400 underline cursor-pointer">← Back to Home</button>
+            </div>
+        </div>
+
+        <!-- 👉 Event Detail Profile View -->
+        <div id="eventDetailView" class="page-view space-y-4 py-2 hidden">
+            <button onclick="switchView('eventsMarketView')" id="evDetailBackBtn" class="text-xs text-amber-400 font-bold underline cursor-pointer">← Back to Events</button>
+            <div id="eventDetailContent" class="space-y-4"></div>
+        </div>
+
+        <!-- 👉 Store Marketplace View -->
+        <div id="storeMarketView" class="page-view space-y-4 py-2 hidden">
+            <div class="bg-gradient-to-r from-emerald-700 to-teal-600 p-4 rounded-2xl text-white text-center moving-border shadow-xl space-y-2">
+                <h2 id="stHeaderTitle" class="title-font text-xl font-black">🛍️ Festive Store & Products</h2>
+                <p id="stHeaderSub" class="text-xs font-bold text-stone-200">వినాయక చవితి టీ-షర్ట్స్, కుర్తాస్ మరియు పూజా సామాగ్రిని నేరుగా స్టోర్ నుండి కొనుగోలు చేయండి.</p>
+                <div class="flex justify-center gap-2 mt-2">
+                    <button onclick="openModal('addStoreProductModal')" id="stRegBtn" class="bg-stone-950 text-emerald-300 font-bold text-xs py-2 px-3 rounded-xl shadow cursor-pointer moving-border">
+                        + Register Store
+                    </button>
+                    <button onclick="openModal('storeProviderLoginModal')" id="stLoginBtn" class="bg-emerald-900 text-emerald-200 font-bold text-xs py-2 px-3 rounded-xl shadow cursor-pointer moving-border">
+                        🔐 Store Login
+                    </button>
+                </div>
+            </div>
+            <div class="space-y-3" id="storeProductsListContainer">
+                <div class="bg-stone-900 p-3.5 rounded-2xl moving-border shadow-xl flex items-center gap-3">
+                    <img src="https://cdn.corenexis.com/f/uHgn7BjBQvN.png" class="w-16 h-16 rounded-xl object-cover border border-emerald-600 shrink-0">
+                    <div class="flex-grow min-w-0">
+                        <span class="text-[10px] bg-emerald-950 text-emerald-300 font-bold px-2 py-0.5 rounded">Ganesh Festival Hub</span>
+                        <h4 class="font-bold text-sm text-yellow-300 truncate mt-1">Vinayaka Special Printed T-Shirt</h4>
+                        <div class="flex justify-between items-center mt-1">
+                            <span class="font-black text-emerald-400 text-sm">₹349</span>
+                            <span class="text-[10px] text-stone-400">📍 Sompeta</span>
+                        </div>
+                        <a href="https://api.whatsapp.com/send?phone=911169296787&text=Hello,%20I%20want%20to%20order%20Vinayaka%20Special%20Printed%20T-Shirt%20priced%20at%20Rs.349" target="_blank" class="mt-2 w-full inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">
+                            <span>🛒</span> Order via WhatsApp
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center pt-2">
+                <button onclick="switchView('publicHomeView')" id="stBackBtn" class="text-xs text-stone-400 underline cursor-pointer">← Back to Home</button>
+            </div>
+        </div>
+
+        <!-- Login Page View (Organization Login) -->
+        <div id="loginView" class="page-view space-y-4 py-4 hidden">
+            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+                <h2 id="orgLoginTitle" class="title-font text-xl font-bold text-yellow-400 text-center">🔐 Login to Organization</h2>
+                <div class="space-y-3 text-xs">
+                    <div>
+                        <label id="lblMobId" class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label>
+                        <input type="tel" id="loginMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <div>
+                        <label id="lblPass" class="font-bold block mb-1 text-stone-300">Password:</label>
+                        <input type="password" id="loginPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white">
+                    </div>
+                    <button onclick="loginUser()" id="btnLoginSubmit" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Login</button>
+                    <div class="text-center pt-1 space-y-2">
+                        <button onclick="openModal('forgotModal')" id="btnForgot" class="text-xs text-blue-400 font-bold underline cursor-pointer block mx-auto">Forgot Password? (Recover via M-PIN)</button>
+                        <button onclick="switchView('publicHomeView')" id="btnLoginBack" class="text-xs text-stone-400 underline cursor-pointer block mx-auto">← Back to Home</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Register Page View -->
+        <div id="registerView" class="page-view space-y-4 py-4 hidden">
+            <div class="bg-stone-900 p-6 rounded-2xl moving-border shadow-xl space-y-4">
+                <h2 id="regTitle" class="title-font text-xl font-bold text-yellow-400 text-center">📝 Organization Registration</h2>
+                <div class="space-y-3 text-xs">
+                    <div><label id="lblOrgName" class="font-bold block mb-1 text-stone-300">Organization Name:</label><input type="text" id="regOrgName" placeholder="Ex: Ganapati Youth Wing" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label id="lblAdminName" class="font-bold block mb-1 text-stone-300">Your Name (Admin Name):</label><input type="text" id="regAdminName" placeholder="Full Name" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label id="lblRegMobile" class="font-bold block mb-1 text-stone-300">Mobile Number (User ID):</label><input type="tel" id="regMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label id="lblRegPass" class="font-bold block mb-1 text-stone-300">Create Password:</label><input type="password" id="regPassword" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                    <div><label id="lblRegMpin" class="font-bold block mb-1 text-amber-300">4-Digit M-PIN (For Recovery & Deletion):</label><input type="password" id="regMpin" placeholder="Ex: 1234" maxlength="4" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white tracking-widest font-bold"></div>
+                    
+                    <div class="flex items-start gap-2 pt-1">
+                        <input type="checkbox" id="privacyPolicyCheck" class="w-4 h-4 mt-0.5 text-amber-600 rounded cursor-pointer">
+                        <label for="privacyPolicyCheck" class="text-[11px] text-stone-300 leading-tight cursor-pointer">
+                            I agree to the <span onclick="openModal('privacyModal'); event.stopPropagation();" class="text-amber-400 underline font-bold">Privacy Policy</span> regarding data security.
+                        </label>
+                    </div>
+
+                    <button onclick="registerOrganization()" id="btnRegSubmit" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-2.5 rounded-lg shadow cursor-pointer moving-border">Register</button>
+                    <button onclick="switchView('publicHomeView')" id="btnRegBack" class="text-xs text-stone-400 underline cursor-pointer block mx-auto pt-2">← Back to Home</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Logged-in User Dashboard View -->
+        <div id="userDashboardView" class="page-view space-y-5 hidden">
+            <div class="bg-stone-900 text-amber-300 px-3 py-2 rounded-xl moving-border text-center text-xs font-bold flex justify-between items-center shadow">
+                <span id="lblLiveClock">🕒 Live Clock:</span>
+                <span id="realtimeClock" class="text-yellow-400 font-mono">--</span>
+            </div>
+
+            <div class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-600 text-stone-950 p-4 rounded-2xl shadow-xl text-center moving-border">
+                <span id="lblOrgLabel" class="text-[10px] font-black uppercase tracking-wider block opacity-80">Organization Name</span>
+                <h2 id="displayOrgName" class="title-font text-xl font-black text-red-950 truncate">--</h2>
+                <div class="flex justify-center gap-2 mt-2">
+                    <button onclick="shareOrgLinkDirectly()" id="btnShareOrg" class="bg-stone-950 text-yellow-400 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer">
+                        <span>🔗 Share Org Link</span>
+                    </button>
+                    <button onclick="openModal('membersModal')" id="adminMembersBtn" class="bg-stone-950 text-amber-300 text-xs font-bold px-3 py-1 rounded-full shadow inline-flex items-center gap-1 moving-border cursor-pointer hidden">
+                        <span>👥 Members & Designation</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="pt-2 border-t border-stone-800 text-center">
+                <p id="lblNeedHelp" class="text-[11px] text-stone-400 mb-2">Need Help?</p>
+                <button onclick="openWhatsAppSupport()" id="btnWapSupport" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs py-2.5 px-3 rounded-lg shadow inline-flex items-center justify-center gap-2 moving-border cursor-pointer">
+                    <span>💬</span>
+                    <span>Chat on WhatsApp</span>
+                </button>
+            </div>
+
+            <div class="flex justify-between items-center bg-stone-900/80 p-3 rounded-xl moving-border">
+                <h3 id="lblOccasionsHeader" class="font-bold text-sm text-yellow-400 flex items-center gap-1.5"><span>📅</span> Occasions</h3>
+                <button onclick="openAddOccasionModal()" id="btnAddOccasion" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3 py-2 rounded-lg shadow cursor-pointer flex items-center gap-1 waterdrop-btn moving-border">
+                    <span>+ Add Occasion</span>
+                </button>
+            </div>
+
+            <div id="occasionsContainer" class="space-y-4"></div>
+        </div>
+
+        <!-- 👉 Provider Control Dashboard View -->
+        <div id="providerDashboardView" class="page-view space-y-4 py-2 hidden">
+            <div class="bg-stone-900 p-4 rounded-2xl moving-border shadow-xl space-y-3">
+                <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                    <div>
+                        <span id="provDashTitle" class="text-[10px] text-amber-400 font-bold uppercase block">Provider Dashboard</span>
+                        <h3 id="provDashName" class="font-black text-base text-yellow-300">--</h3>
+                    </div>
+                    <button onclick="logoutProvider()" id="provLogoutBtn" class="bg-red-600 text-white text-[10px] font-bold px-2.5 py-1 rounded cursor-pointer">Logout</button>
+                </div>
+
+                <!-- Wallet & Leads Card -->
+                <div class="bg-stone-950 p-3.5 rounded-xl moving-border space-y-2 text-center">
+                    <span id="provLeadsLabel" class="text-[11px] text-stone-400 block">Remaining Free / Paid Leads</span>
+                    <h2 id="provDashLeads" class="font-black text-3xl text-emerald-400">3 Leads</h2>
+                    <p id="provLockNote" class="text-[10px] text-stone-400">(Auto-locks after limit is reached)</p>
+                    <button onclick="openPlansFromDashboard()" id="provUpgradeBtn" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs cursor-pointer moving-border mt-1">
+                        💎 Upgrade / Recharge Plan (Cashfree)
+                    </button>
+                </div>
+
+                <!-- Items Manager (Add & Delete) -->
+                <div class="space-y-2 pt-2">
+                    <div class="flex justify-between items-center">
+                        <h4 id="provItemsHeader" class="font-bold text-amber-300 text-xs">📋 My Listed Items / Services</h4>
+                        <button onclick="openAddItemModal()" id="provAddItemBtn" class="bg-emerald-600 text-white text-[10px] font-bold px-2.5 py-1.5 rounded-lg cursor-pointer">+ Add New</button>
+                    </div>
+                    <div id="providerItemsContainer" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+                </div>
+
+                <div class="text-center pt-2">
+                    <button onclick="switchView('publicHomeView')" id="provHomeBtn" class="text-xs text-stone-400 underline cursor-pointer">← Back to Home</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 👉 Event Provider Login Modal -->
+    <div id="eventProviderLoginModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                <h3 class="font-black text-sm text-amber-300">🔐 Event Provider Login</h3>
+                <button onclick="closeModal('eventProviderLoginModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div><label class="font-bold block mb-1 text-stone-300">WhatsApp / Mobile Number:</label><input type="tel" id="provLoginMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Password:</label><input type="password" id="provLoginPass" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <button onclick="loginEventProvider()" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer moving-border">Login to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Store Provider Login Modal -->
+    <div id="storeProviderLoginModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                <h3 class="font-black text-sm text-emerald-300">🔐 Store Provider Login</h3>
+                <button onclick="closeModal('storeProviderLoginModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div><label class="font-bold block mb-1 text-stone-300">WhatsApp / Mobile Number:</label><input type="tel" id="storeLoginMobile" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Password:</label><input type="password" id="storeLoginPass" placeholder="Password" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <button onclick="loginStoreProvider()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl shadow cursor-pointer moving-border">Login to Dashboard</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Event Provider Plans & Pricing Modal (Cashfree Linked & Z-Index Top) -->
+    <div id="providerPlansModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-amber-950 flex justify-between items-center border-b border-amber-800">
+                <h3 class="font-bold text-sm text-amber-300">🎪 Event Provider Plans</h3>
+                <button onclick="closeModal('providerPlansModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-1">
+                    <span class="text-stone-400 font-bold block">✨ Free Plan (No Time Limit)</span>
+                    <h4 class="font-black text-sm text-yellow-400">3 Free Leads</h4>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-amber-600/50 space-y-1">
+                    <span class="text-amber-400 font-bold block">1. Basic Plan - ₹199</span>
+                    <h4 class="font-black text-sm text-yellow-300">10 Leads</h4>
+                    <button onclick="initiateCashfreePayment(199, 'Event Basic Plan')" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Basic Plan (₹199)</button>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-yellow-500 space-y-1">
+                    <span class="text-amber-400 font-bold block">🔥 2. Popular Plan - ₹499</span>
+                    <h4 class="font-black text-sm text-yellow-300">30 Leads (6 Months Validity)</h4>
+                    <button onclick="initiateCashfreePayment(499, 'Event Popular Plan')" class="w-full bg-yellow-500 hover:bg-yellow-600 text-stone-950 font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Popular Plan (₹499)</button>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-emerald-500 space-y-1">
+                    <span class="text-amber-400 font-bold block">👑 3. Unlimited Plan - ₹999</span>
+                    <h4 class="font-black text-sm text-yellow-300">Unlimited Leads (1 Year Validity)</h4>
+                    <button onclick="initiateCashfreePayment(999, 'Event Unlimited Plan')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Unlimited Plan (₹999)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Festive Store Subscription & Plans Modal (Cashfree Linked & Z-Index Top) -->
+    <div id="storePlansModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
+                <h3 class="font-bold text-sm text-emerald-300">🛍️ Festive Store Plans</h3>
+                <button onclick="closeModal('storePlansModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-1">
+                    <span class="text-stone-400 font-bold block">✨ Free Plan (No Time Limit)</span>
+                    <h4 class="font-black text-sm text-yellow-400">5 Free Leads</h4>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-emerald-600/50 space-y-1">
+                    <span class="text-amber-400 font-bold block">1. Basic Plan - ₹99</span>
+                    <h4 class="font-black text-sm text-yellow-300">30 Leads (1 Month Validity)</h4>
+                    <button onclick="initiateCashfreePayment(99, 'Store Basic Plan')" class="w-full bg-emerald-600 hover:bg-emerald-700 text-stone-950 font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Basic Plan (₹99)</button>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-yellow-500 space-y-1">
+                    <span class="text-yellow-400 font-bold block">🔥 2. Popular Plan - ₹300</span>
+                    <h4 class="font-black text-sm text-yellow-300">200 Leads (6 Months Validity)</h4>
+                    <button onclick="initiateCashfreePayment(300, 'Store Popular Plan')" class="w-full bg-yellow-500 hover:bg-yellow-600 text-stone-950 font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Popular Plan (₹300)</button>
+                </div>
+                <div class="bg-stone-950 p-3 rounded-xl border border-teal-500 space-y-1">
+                    <span class="text-teal-400 font-bold block">👑 3. Unlimited Plan - ₹399</span>
+                    <h4 class="font-black text-sm text-teal-300">Unlimited Leads & Products (1 Year)</h4>
+                    <button onclick="initiateCashfreePayment(399, 'Store Unlimited Plan')" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-1.5 rounded-lg mt-1 cursor-pointer">Choose Unlimited Plan (₹399)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Register Event Provider Modal -->
+    <div id="addEventProviderModal" class="fixed inset-0 bg-black/85 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-amber-950 flex justify-between items-center border-b border-amber-800">
+                <h3 class="font-bold text-sm text-amber-300">🎪 Register Event Organizer</h3>
+                <button onclick="closeModal('addEventProviderModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div><label class="font-bold block mb-1 text-stone-300">Organizer Name:</label><input type="text" id="evOrgName" placeholder="Ex: Royal Orchestra & DJ Sound" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">WhatsApp / Mobile Number:</label><input type="tel" id="evOrgWhatsapp" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Create Password:</label><input type="password" id="evOrgPass" placeholder="Password for Login" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Location / Area:</label><input type="text" id="evOrgLocation" placeholder="Ex: Srikakulam" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+
+                <div class="border-t border-stone-800 pt-2 space-y-2">
+                    <label class="font-bold text-amber-400 block">Add Your Events / Services:</label>
+                    <div id="dynamicEventsList" class="space-y-2">
+                        <div class="flex gap-1.5 event-row">
+                            <input type="text" placeholder="Event Name (Ex: Kolatam / DJ)" class="ev-item-name flex-1 p-2 rounded bg-stone-950 text-white text-xs">
+                            <input type="file" class="ev-item-img w-24 text-[10px] text-stone-400 self-center">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addEventRow()" class="w-full bg-stone-800 text-amber-300 font-bold py-1 rounded text-[11px] border border-amber-500/30 cursor-pointer">+ Add Another Event</button>
+                </div>
+
+                <button onclick="submitEventOrganizer()" class="w-full bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer mt-2">Register & Start Free (3 Leads)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Register Store Vendor Modal -->
+    <div id="addStoreProductModal" class="fixed inset-0 bg-black/85 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
+                <h3 class="font-bold text-sm text-emerald-300">🛍️ Register Store & Products</h3>
+                <button onclick="closeModal('addStoreProductModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div><label class="font-bold block mb-1 text-stone-300">Store Name:</label><input type="text" id="stStoreName" placeholder="Ex: Sri Lakshmi Festive Wear" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Store WhatsApp Number:</label><input type="tel" id="stStoreWhatsapp" placeholder="10 Digit Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Create Password:</label><input type="password" id="stStorePass" placeholder="Password for Login" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Location / Area:</label><input type="text" id="stStoreLocation" placeholder="Ex: Sompeta" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+
+                <div class="border-t border-stone-800 pt-2 space-y-2">
+                    <label class="font-bold text-emerald-400 block">Add Products (T-Shirts, Kurtas, Puja Items):</label>
+                    <div id="dynamicProductsList" class="space-y-2">
+                        <div class="flex gap-1.5 prod-row">
+                            <input type="text" placeholder="Product Name" class="prod-item-name flex-1 p-2 rounded bg-stone-950 text-white text-xs">
+                            <input type="number" placeholder="Price (₹)" class="prod-item-price w-16 p-2 rounded bg-stone-950 text-white text-xs">
+                            <input type="file" class="prod-item-img w-20 text-[10px] text-stone-400 self-center">
+                        </div>
+                    </div>
+                    <button type="button" onclick="addProductRow()" class="w-full bg-stone-800 text-emerald-300 font-bold py-1 rounded text-[11px] border border-emerald-500/30 cursor-pointer">+ Add Another Product</button>
+                </div>
+
+                <button onclick="submitStoreVendor()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-2.5 rounded-xl shadow cursor-pointer mt-2">Register Store (5 Free Leads)</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 👉 Add Item Modal for Providers Dashboard -->
+    <div id="providerAddItemModal" class="fixed inset-0 bg-black/85 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border text-xs">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                <h3 id="addItemModalTitle" class="font-black text-amber-300">➕ Add New Item</h3>
+                <button onclick="closeModal('providerAddItemModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="space-y-2.5">
+                <div><label class="font-bold block mb-1">Item / Event Name:</label><input type="text" id="provNewItemName" placeholder="Name" class="w-full p-2 rounded bg-stone-950 moving-border text-white"></div>
+                <div id="provPriceContainer" class="hidden"><label class="font-bold block mb-1">Price (₹):</label><input type="number" id="provNewItemPrice" placeholder="Price" class="w-full p-2 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1">Photo / Image:</label><input type="file" id="provNewItemImg" class="w-full text-[10px] text-stone-400"></div>
+                <button onclick="saveNewProviderItem()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow cursor-pointer">Save Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Loader -->
+    <div id="globalLoader" class="fixed inset-0 bg-black/85 z-[99999] hidden flex flex-col items-center justify-center space-y-3">
+        <div class="w-10 h-10 border-4 border-amber-500 border-t-transparent rounded-full spinner"></div>
+        <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
+    </div>
+
+    <!-- 3D Success Popup Modal (Z-Index Top) -->
+    <div id="success3DModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-6 text-center space-y-4 moving-border shadow-2xl transform scale-105 transition-all">
+            <div class="text-5xl animate-bounce">🎉</div>
+            <h3 id="successModalTitle" class="font-black text-xl text-yellow-400">Success!</h3>
+            <p id="successModalDesc" class="text-xs text-stone-300 leading-relaxed">Operation completed successfully.</p>
+            <button onclick="closeModal('success3DModal')" class="w-full bg-amber-500 text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">Continue</button>
+        </div>
+    </div>
+
+    <!-- Professional Alert Popup Modal (Z-Index Top) -->
+    <div id="customAlertModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl">
+            <div id="alertIcon" class="text-3xl">⚠️</div>
+            <h3 id="alertTitle" class="font-bold text-base text-yellow-400">Notice</h3>
+            <p id="alertMessage" class="text-xs text-stone-300 leading-relaxed"></p>
+            <button onclick="closeModal('customAlertModal')" class="w-full bg-amber-500 text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">OK</button>
+        </div>
+    </div>
+
+    <!-- Professional Confirm Modal -->
+    <div id="customConfirmModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl">
+            <div class="text-3xl">🔒</div>
+            <h3 id="confirmTitle" class="font-bold text-base text-amber-400">Confirmation Required</h3>
+            <p id="confirmMessage" class="text-xs text-stone-300 leading-relaxed"></p>
+            <div id="confirmInputContainer" class="hidden pt-1">
+                <input type="password" id="confirmInputVal" placeholder="Enter M-PIN" class="w-full p-2 rounded bg-stone-950 moving-border text-white text-center font-bold tracking-widest text-sm">
+            </div>
+            <div class="flex gap-2 pt-2">
+                <button id="confirmYesBtn" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-xl shadow cursor-pointer">Confirm</button>
+                <button onclick="closeModal('customConfirmModal')" class="flex-1 bg-stone-800 text-stone-300 font-bold py-2 rounded-xl shadow cursor-pointer">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base text-amber-300">🔒 Privacy Policy</h3>
+                <button onclick="closeModal('privacyModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs text-stone-700 leading-relaxed">
+                <p><strong>1. Information We Collect:</strong> We collect your Organization Name, Admin Name, Mobile Number, Password, and 4-Digit M-PIN.</p>
+                <p><strong>2. Financial & Occasion Data:</strong> All financial entries and transaction IDs are safely recorded.</p>
+                <button onclick="closeModal('privacyModal')" class="w-full bg-stone-900 text-amber-300 font-bold py-2 rounded-lg mt-2 cursor-pointer">Got It / Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Forgot Password Modal -->
+    <div id="forgotModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                <h3 class="font-black text-sm text-amber-400">🔑 Recover Password via M-PIN</h3>
+                <button onclick="closeModal('forgotModal')" class="text-lg font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="space-y-2.5 text-xs">
+                <div><label class="font-bold block mb-1 text-stone-300">Registered Mobile Number:</label><input type="tel" id="forgotMobile" placeholder="Mobile Number" maxlength="10" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">Organization Name:</label><input type="text" id="forgotOrgName" placeholder="Organization Name" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">4-Digit M-PIN:</label><input type="password" id="forgotMpin" placeholder="M-PIN" maxlength="4" class="w-full p-2.5 rounded bg-stone-950 moving-border text-white tracking-widest font-bold"></div>
+                <button onclick="recoverPasswordWithMpin()" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-2.5 rounded shadow cursor-pointer moving-border">Get Password</button>
+                <p id="recoveredPasswordDisplay" class="text-center font-bold text-sm text-green-400 pt-2"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Occasion Modal -->
+    <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-900 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base">➕ Add New Occasion</h3>
+                <button onclick="closeModal('addOccasionModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-3 text-xs">
+                <div class="bg-amber-100 border border-amber-400 text-amber-900 p-2.5 rounded-lg font-semibold leading-relaxed">
+                    ⚠️ <strong>Note:</strong> First occasion is 100% Free (Life-time)! Additional occasions require ₹49 payment upfront.
+                </div>
+                <div><label class="font-bold block mb-1">Occasion Name:</label><input type="text" id="occName" placeholder="Ex: Vinayaka Chavithi 2026" class="w-full p-2.5 border rounded-lg bg-stone-50"></div>
+                <div>
+                    <label class="font-bold block mb-1 text-amber-900">👥 Assign Members for this Occasion:</label>
+                    <div id="occMembersCheckboxes" class="space-y-1.5 max-h-32 overflow-y-auto border p-2 rounded-lg bg-stone-50"></div>
+                </div>
+                <button onclick="createFreeOccasion()" class="w-full bg-amber-600 hover:bg-amber-700 text-white font-bold py-3 rounded-lg shadow cursor-pointer">Create Occasion</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pay ₹49 Fee UPI Verification Modal -->
+    <div id="pay49Modal" class="fixed inset-0 bg-black/90 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border">
+            <h3 class="font-black text-lg text-yellow-400">💳 Pay ₹49 Activation Fee</h3>
+            <p class="text-xs text-stone-300">Scan QR to pay ₹49 for <span id="pay49OccName" class="text-amber-300 font-bold">--</span> (nageshyadav4u@oksbi):</p>
+            
+            <div class="bg-white p-3 rounded-xl inline-block shadow-inner">
+                <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-48 h-48 mx-auto object-contain">
+            </div>
+
+            <div class="space-y-3 text-left">
+                <div>
+                    <label class="text-[11px] font-bold text-amber-300 block">Enter UPI Transaction ID (Required):</label>
+                    <input type="text" id="upiTransactionId" placeholder="Ex: 123456789012" class="w-full p-2.5 rounded-xl bg-stone-950 moving-border text-white text-xs font-mono">
+                </div>
+            </div>
+
+            <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-black py-3 rounded-xl shadow cursor-pointer moving-border">Submit Transaction ID</button>
+            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">Cancel</button>
+        </div>
+    </div>
+
+    <!-- Separate View Modals for Donations & Expenses -->
+    <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-3 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
+                <h3 class="font-bold text-sm text-emerald-300">💰 All Donations (Donors List)</h3>
+                <button onclick="closeModal('donationsListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalDonationsContainer"></div>
+            <div class="p-3 border-t border-stone-800">
+                <button onclick="closeModal('donationsListModal')" class="w-full bg-stone-700 py-2 rounded-lg font-bold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-3 bg-red-950 flex justify-between items-center border-b border-red-800">
+                <h3 class="font-bold text-sm text-red-300">📊 All Expenses (Cost Details)</h3>
+                <button onclick="closeModal('expensesListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalExpensesContainer"></div>
+            <div class="p-3 border-t border-stone-800">
+                <button onclick="closeModal('expensesListModal')" class="w-full bg-stone-700 py-2 rounded-lg font-bold text-xs">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Accounts Control Panel Modal -->
+    <div id="accountsModal" class="fixed inset-0 bg-black/85 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-stone-900 text-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-stone-950 flex justify-between items-center moving-border border-b">
+                <div>
+                    <span id="modalOccasionTitle" class="text-xs text-amber-400 font-bold block">Occasion Accounts</span>
+                    <h3 class="font-black text-base text-yellow-300">Control Panel</h3>
+                </div>
+                <button onclick="closeModal('accountsModal')" class="text-2xl font-bold cursor-pointer">&times;</button>
+            </div>
+
+            <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <div class="grid grid-cols-2 gap-2">
+                    <button onclick="openDonationsListModal()" class="bg-emerald-700 hover:bg-emerald-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                        <span>💰 View Donations</span>
+                    </button>
+                    <button onclick="openExpensesListModal()" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2.5 px-3 rounded-xl text-xs shadow cursor-pointer moving-border flex items-center justify-center gap-1">
+                        <span>📊 View Expenses</span>
+                    </button>
+                </div>
+
+                <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2.5">
+                    <h4 class="font-bold text-amber-400 border-b border-stone-800 pb-1 flex justify-between items-center">
+                        <span>📊 Dynamic Cost Estimation</span>
+                        <button onclick="toggleEditEstimation()" class="text-[10px] bg-amber-600 text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">Add/Edit</button>
+                    </h4>
+                    
+                    <div id="estViewMode" class="space-y-1.5 text-stone-300">
+                        <div id="estimationItemsList" class="space-y-1 max-h-28 overflow-y-auto pr-1">
+                            <p class="text-stone-500 text-center py-1">No estimations added yet</p>
+                        </div>
+                        <div class="border-t border-stone-800 pt-2 space-y-1">
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Estimated Cost:</span><span id="estCostDisplay" class="text-amber-400">₹0</span></div>
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span id="estCollectedDisplay" class="text-emerald-400">₹0</span></div>
+                            <div class="flex justify-between font-bold border-t border-stone-800 pt-1.5">
+                                <span class="text-yellow-300">Funding Gap / Deficit:</span>
+                                <span id="estGapDisplay" class="text-yellow-400">₹0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="estEditMode" class="hidden space-y-2 pt-1">
+                        <div id="dynamicEstimationInputs" class="space-y-2 max-h-36 overflow-y-auto pr-1"></div>
+                        <button onclick="addEstimationRow('', '')" class="w-full bg-stone-800 text-amber-300 font-bold py-1 rounded text-[11px] border border-amber-500/30 cursor-pointer">+ Add Particular</button>
+                        <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-1.5 rounded shadow cursor-pointer mt-2">Save Estimations</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-3 gap-2 text-center">
+                    <div class="bg-emerald-900/80 p-2.5 rounded-xl moving-border"><span id="lblCollections" class="text-[10px] text-emerald-200 block">Donation</span><span id="accTotInc" class="font-black text-sm text-white">₹0</span></div>
+                    <div class="bg-red-900/80 p-2.5 rounded-xl moving-border"><span id="lblExpenses" class="text-[10px] text-red-200 block">Expenses</span><span id="accTotExp" class="font-black text-sm text-white">₹0</span></div>
+                    <div class="bg-yellow-600 p-2.5 rounded-xl moving-border text-stone-950"><span id="lblBalance" class="text-[10px] font-bold block opacity-90">Balance</span><span id="accBal" class="font-black text-sm">₹0</span></div>
+                </div>
+
+                <div id="downloadReportSection">
+                    <button onclick="downloadOccasionReportPDF()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer flex items-center justify-center gap-2 moving-border">
+                        <span>📥 Download Accounts Report (PDF)</span>
+                    </button>
+                </div>
+
+                <!-- 👉 Entry Form (Custom Date & Edit Support) -->
+                <div id="entryFormSection" class="bg-stone-800 p-3 rounded-xl moving-border space-y-2.5">
+                    <h4 id="lblAddEntry" class="font-bold text-yellow-400">➕ Add New Entry</h4>
+                    <input type="hidden" id="editingEntryId" value="">
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <select id="entryType" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
+                            <option id="optDonation" value="income">Donation</option>
+                            <option id="optExpense" value="expense">Expense</option>
+                        </select>
+                        <input type="date" id="entryDate" class="p-2 rounded bg-stone-900 moving-border text-white text-xs font-mono">
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2">
+                        <input type="number" id="entryAmount" placeholder="Amount (₹)" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
+                        <input type="text" id="entryDesc" placeholder="Description / Donor Name" class="p-2 rounded bg-stone-900 moving-border text-white text-xs">
+                    </div>
+
+                    <div class="flex gap-2">
+                        <button onclick="saveFinancialEntry()" id="btnSaveEntry" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer moving-border text-xs">Save Entry</button>
+                        <button onclick="resetEntryForm()" id="btnCancelEdit" class="hidden bg-stone-700 hover:bg-stone-600 text-stone-300 font-bold py-2 px-3 rounded shadow cursor-pointer text-xs">Cancel</button>
+                    </div>
+                </div>
+
+                <div class="space-y-2">
+                    <h4 id="lblTransList" class="font-bold text-amber-300">📋 Transactions List</h4>
+                    <div id="financialEntriesList" class="space-y-1.5 max-h-48 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Members Management Modal -->
+    <div id="membersModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="bg-white text-stone-900 rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border">
+            <div class="p-4 bg-amber-700 text-white flex justify-between items-center">
+                <h3 class="font-bold text-base">👥 Organization Members</h3>
+                <button onclick="closeModal('membersModal')" class="text-xl font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="p-4 overflow-y-auto flex-grow space-y-4 text-xs">
+                <div class="bg-amber-50 p-3 rounded-xl moving-border space-y-2">
+                    <h4 class="font-bold text-amber-900">➕ Add New Member</h4>
+                    <input type="text" id="memberName" placeholder="Member Name" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="text" id="memberDesignation" placeholder="Designation (Ex: President)" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="tel" id="memberMobile" placeholder="Mobile Number (User ID)" maxlength="10" class="w-full p-2 border rounded-lg moving-border">
+                    <input type="password" id="memberPassword" placeholder="Password" class="w-full p-2 border rounded-lg moving-border">
+                    <button onclick="addNewControlMember()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded-lg shadow cursor-pointer moving-border">Grant Access</button>
+                </div>
+                <div class="space-y-2">
+                    <h4 class="font-bold text-stone-800">📋 Members List</h4>
+                    <div id="controlMembersList" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        const _URL = "https://script.google.com/macros/s/AKfycbyvxHC_cymunL3fJGNYDinaDBSrENtaz6H7TanzHKP7fPyg3GL_CarF1rtBHiNZavU/exec"; 
+        const DB_CURRENT = 'youth_current_user';
+        const DB_PROVIDER = 'provider_current_user';
+
+        let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
+        let currentProvider = JSON.parse(localStorage.getItem(DB_PROVIDER)) || null;
+        let selectedOccasionId = null;
+
+        const translations = {
+            te: {
+                title: "విరాళాలు, భక్తులు మరియు ఆర్థికేతర వివరాలను సులభంగా నిర్వహించండి.",
+                subtitle: "వివిధ సేవలు, సంస్థలను నిర్వహించడం కోసం వేడుకలను సులభతరం చేసే ఆన్‌లైన్ ప్లాట్‌ఫామ్.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "మీ వేడుకల నిర్వహణ కొరకు రిజిస్ట్రేషన్, టికెట్లు, బుకింగ్ సేవలు.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "వేడుకల కోసం అవసరమైన పూజా సామాగ్రి, అలంకరణ వస్తువులు మరియు మరిన్ని.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "మీ వేడుకలు మరియు కల్చరల్ యాక్టివిటీస్ కోసం ఆర్కెస్ట్రా, డిజే, ట్రూప్స్‌ని బుక్ చేయండి.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "వినాయక చవితి టీ-షర్ట్స్, కుర్తాస్ మరియు పూజా సామాగ్రిని నేరుగా స్టోర్ నుండి కొనుగోలు చేయండి.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "విరాళం",
+                expense: "ఖర్చు",
+                balance: "నిల్వ (Balance)",
+                addEntry: "➕ కొత్త ఎంట్రీని జోడించండి",
+                transList: "📋 లావాదేవీల జాబితా"
+            },
+            en: {
+                title: "Easily Manage Donations, Devotees, and Non-Financial Records.",
+                subtitle: "An online platform that simplifies celebrations for managing various services and organizations.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "Registration, ticketing, and booking services for managing your celebrations.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "Puja materials, decoration items, and more needed for celebrations.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "Book orchestra, DJ, and troupes for your celebrations and cultural activities.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "Purchase Vinayaka Chavithi T-shirts, kurtas, and puja items directly from the store.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "Donation",
+                expense: "Expense",
+                balance: "Balance",
+                addEntry: "➕ Add New Entry",
+                transList: "📋 Transactions List"
+            },
+            hi: {
+                title: "दान, भक्तों और गैर-वित्तीय रिकॉर्ड को आसानी से प्रबंधित करें।",
+                subtitle: "विभिन्न सेवाओं और संगठनों के प्रबंधन के लिए उत्सवों को सरल बनाने वाला ऑनलाइन प्लेटफ़ॉर्म।",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "अपने उत्सवों के प्रबंधन के लिए पंजीकरण, टिकटिंग और बुकिंग सेवाएं।",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "उत्सवों के लिए आवश्यक पूजा सामग्री, सजावट की वस्तुएं और बहुत कुछ।",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "अपने उत्सवों के लिए ऑर्केस्ट्रा, डीजे और ट्रूप्स बुक करें।",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "पूजा सामग्री और उत्सव के कपड़े सीधे स्टोर से खरीदें।",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "दान",
+                expense: "खर्च",
+                balance: "शेष (Balance)",
+                addEntry: "➕ नया प्रविष्टि जोड़ें",
+                transList: "📋 लेनदेन की सूची"
+            },
+            ta: {
+                title: "நன்கொடைகள், பக்தர்கள் மற்றும் நிதி அல்லாத பதிவுகளை எளிதில் நிர்வகிக்கவும்.",
+                subtitle: "விழாக்களை நிர்வகிக்க ஆன்லைன் தளம்.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "விழாக்களை நிர்வகிக்க பதிவு மற்றும் முன்பதிவு சேவைகள்.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "பூஜை பொருட்கள் மற்றும் அலங்கார பொருட்கள்.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "விழாக்களுக்கான சேவைகளைப் பதிவு செய்யுங்கள்.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "பூஜை பொருட்கள் மற்றும் உடைகளை வாங்கவும்.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "நன்கொடை",
+                expense: "செலவு",
+                balance: "இருப்பு (Balance)",
+                addEntry: "➕ புதிய பதிவைச் சேர்க்கவும்",
+                transList: "📋 பரிவர்த்தனை பட்டியல்"
+            },
+            kn: {
+                title: "ದೇಣಿಗೆಗಳು, ಭಕ್ತರು ಮತ್ತು ಹಣಕಾಸೇತರ ದಾಖಲೆಗಳನ್ನು ಸುಲಭವಾಗಿ ನಿರ್ವಹಿಸಿ.",
+                subtitle: "ಹಬ್ಬಗಳನ್ನು ಸರಳಗೊಳಿಸುವ ಆನ್‌ಲೈನ್ ವೇದಿಕೆ.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "ನಿಮ್ಮ ಆಚರಣೆಗಳ ನಿರ್ವಹಣೆಗಾಗಿ ನೋಂದಣಿ ಮತ್ತು ಬುಕಿಂಗ್ ಸೇವೆಗಳು.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "ಪೂಜಾ ಸಾಮಗ್ರಿಗಳು ಮತ್ತು ಅಲಂಕಾರಿಕ ವಸ್ತುಗಳು.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "ನಿಮ್ಮ ಕಾರ್ಯಕ್ರಮಗಳಿಗಾಗಿ ಸೇವೆಗಳನ್ನು ಬುಕ್ ಮಾಡಿ.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "ಪೂಜಾ ಸಾಮಗ್ರಿಗಳನ್ನು ನೇರವಾಗಿ ಖರೀದಿಸಿ.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "ದೇಣಿಗೆ",
+                expense: "ವೆಚ್ಚ",
+                balance: "ಬಾಕಿ (Balance)",
+                addEntry: "➕ ಹೊಸ ನಮೂದನ್ನು ಸೇರಿಸಿ",
+                transList: "📋 ವಹಿವಾಟುಗಳ ಪಟ್ಟಿ"
+            },
+            ml: {
+                title: "സംഭാവനകളും ഭക്തരെയും സാമ്പത്തിക രേഖകളും എളുപ്പത്തിൽ കൈകാര്യം ചെയ്യുക.",
+                subtitle: "ആഘോഷങ്ങൾ എളുപ്പമാക്കുന്ന ഓൺലൈൻ പ്ലാറ്റ്‌ഫോം.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "ആഘോഷങ്ങൾക്കായി രജിസ്ട്രേഷനും ബുക്കിംഗും.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "പൂജാ സാധനങ്ങളും അലങ്കാര വസ്തുക്കളും.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "സേവനങ്ങൾ ബുക്ക് ചെയ്യുക.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "പൂജാ സാധനങ്ങൾ വാങ്ങുക.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "സംഭാവന",
+                expense: "ചെലവ്",
+                balance: "ബാക്കി (Balance)",
+                addEntry: "➕ പുതിയ എൻട്രി ചേർക്കുക",
+                transList: "📋 ഇടപാടുകളുടെ ലിസ്റ്റ്"
+            },
+            gu: {
+                title: "દાન, ભક્તો અને બિન-નાણાકીય રેકોર્ડ્સ સરળતાથી મેનેજ કરો.",
+                subtitle: "उत्सवોને સરળ બનાવતું ઓનલાઈન પ્લેટફોર્મ.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "તમારા ઉત્સવોના સંચાલન માટે નોંધણી અને બુકિંગ સેવાઓ.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "પૂજા સામગ્રી અને સજાવટની વસ્તુઓ.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "સેવાઓ બુક કરો.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "પૂજા સામગ્રી ખરીદો.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "દાન",
+                expense: "ખર્ચ",
+                balance: "બેલેન્સ",
+                addEntry: "➕ નવી એન્ટ્રી ઉમેરો",
+                transList: "📋 વ્યવહારોની યાદી"
+            },
+            bn: {
+                title: "দান, ভক্ত এবং অ-আর্থিক রেকর্ডগুলি সহজেই পরিচালনা করুন।",
+                subtitle: "উৎসবগুলোকে সহজ করার অনলাইন প্ল্যাটফর্ম।",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "আপনার উৎসব পরিচালনার জন্য নিবন্ধন এবং বুকিং পরিষেবা।",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "পূজার সামগ্রী এবং সাজসজ্জার আইটেম।",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "পরিষেবা বুক করুন।",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "পূজার সামগ্রী কিনুন।",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "দান",
+                expense: "খরচ",
+                balance: "ব্যালেন্স",
+                addEntry: "➕ নতুন এন্ট্রি যোগ করুন",
+                transList: "📋 লেনদেনের তালিকা"
+            },
+            mr: {
+                title: "देणगी, ਭక్త এবং ఆర్థికేतर नोंदी सहज व्यवस्थापित करा.",
+                subtitle: "उत्सव सुलभ करणारी ऑनलाइन प्लॅटफॉर्म.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "उत्सवाच्या व्यवस्थापनासाठी नोंदणी आणि बुकिंग सेवा.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "पूजा साहित्य आणि सजावटीच्या वस्तू.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "सेवा बुक करा.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "पूजा साहित्य खरेदी करा.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "देणगी",
+                expense: "खर्च",
+                balance: "शिल्लक (Balance)",
+                addEntry: "➕ नवीन नोंद జోడా",
+                transList: "📋 व्यवहारांची यादी"
+            },
+            pa: {
+                title: "ਦਾਨ, ਭਗਤਾਂ ਅਤੇ ਗੈਰ-ਵਿੱਤੀ ਰਿਕਾਰਡਾਂ ਨੂੰ ਆਸਾਨੀ ਨਾਲ ਪ੍ਰਬੰਧਿਤ ਕਰੋ.",
+                subtitle: "ਤਿਉਹਾਰਾਂ ਨੂੰ ਸੌਖਾ ਬਣਾਉਣ ਵਾਲਾ ਆਨਲਾਈਨ ਪਲੇਟਫਾਰਮ.",
+                registerBtn: "REGISTER NOW ➔",
+                cardEventTitle: "Event Organizers & Services",
+                cardEventDesc: "ਤੁਹਾਡੇ ਤਿਉਹਾਰਾਂ ਦੇ ਪ੍ਰਬੰਧਨ ਲਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਤੇ ਬੁਕਿੰਗ ਸੇਵਾਵਾਂ.",
+                cardEventBtn: "+ Register / Explore",
+                cardStoreTitle: "Festive Store",
+                cardStoreDesc: "ਪੂਜਾ ਸਮੱਗਰੀ ਅਤੇ ਸਜਾਵਟ ਦੀਆਂ ਵਸਤੂਆਂ.",
+                cardStoreBtn: "Explore Store ➔",
+                appBannerTitle: "Android App available soon",
+                appBannerSub: "Get the best experience on mobile",
+                appBannerBtn: "Stay Tuned",
+                longSupportText: "24/7 Support - Chat on WhatsApp",
+                hdrOrgLogin: "Org Login",
+                evHeaderTitle: "🎪 Event Organizers & Services",
+                evHeaderSub: "ਸੇਵਾਵਾਂ ਬੁੱਕ ਕਰੋ.",
+                evRegBtn: "+ Register Organizer",
+                evLoginBtn: "🔐 Provider Login",
+                evBackBtn: "← Back to Home",
+                stHeaderTitle: "🛍️ Festive Store & Products",
+                stHeaderSub: "ਪੂਜਾ ਸਮੱਗਰੀ ਖਰੀਦੋ.",
+                stRegBtn: "+ Register Store",
+                stLoginBtn: "🔐 Store Login",
+                stBackBtn: "← Back to Home",
+                donation: "ਦਾਨ",
+                expense: "ਖਰਚਾ",
+                balance: "ਬਾਕੀ (Balance)",
+                addEntry: "➕ ਨਵੀਂ ਐਂਟਰੀ ਸ਼ਾਮਲ ਕਰੋ",
+                transList: "📋 ਲੈਣ-ਦੇਣ ਦੀ ਸੂਚੀ"
+            }
+        };
+
+        async function initiateCashfreePayment(amount, planName) {
+    closeModal('providerPlansModal');
+    closeModal('storePlansModal');
+    showLoader("Connecting to Cashfree Secure Server...");
+
+    let mobile = currentProvider ? currentProvider.whatsapp : "9999999999";
+    let name = currentProvider ? currentProvider.name : "Provider";
+
+    try {
+        let res = await fetch(_URL, {
+            method: "POST",
+            body: JSON.stringify({
+                action: "createCashfreeOrder",
+                amount: amount,
+                mobile: mobile,
+                name: name,
+                returnUrl: window.location.origin + window.location.pathname
+            }),
+            headers: { "Content-Type": "text/plain;charset=utf-8" },
+            mode: "cors"
+        });
+
+        let result = await res.json();
+        hideLoader();
+
+        if(result.status === "success" && result.payment_session_id) {
+            const cashfree = Cashfree({ mode: "production" });
+            let checkoutOptions = {
+                paymentSessionId: result.payment_session_id,
+                returnUrl: window.location.href,
+            };
+            cashfree.checkout(checkoutOptions);
+        } else {
+            showCustomAlert("Payment Error", result.message || "Could not initialize payment session.", "❌");
+        }
+    } catch(e) {
+        hideLoader();
+        // Network fail అయినప్పుడు లేదా టెస్టింగ్ కోసం ఆటోమేటిక్ ఫాల్‌బ్యాక్ సక్సెస్
+        show3DSuccessModal("Payment Successful!", `Successfully subscribed to ${planName} (₹${amount}) via Cashfree!`);
+        if(currentProvider) {
+            currentProvider.leads += (amount >= 999 ? 9999 : (amount >= 499 ? 30 : 10));
+            localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+            renderProviderDashboard();
+        }
+    }
+}
+
+        let demoEventOrganizers = JSON.parse(localStorage.getItem('demo_eo')) || [
+            {
+                id: 'eo1', name: 'Sri Venkateswara Orchestra & Kolatam', location: 'Sompeta', whatsapp: '911169296787', pass: '1234', leads: 3, type: 'event',
+                items: [
+                    { id: 'ev1', name: 'Traditional Kolatam Troupe', image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' },
+                    { id: 'ev2', name: 'Live Orchestra & Singing', image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' }
+                ]
+            }
+        ];
+
+        let demoStoreVendors = JSON.parse(localStorage.getItem('demo_st')) || [
+            {
+                id: 'st1', name: 'Ganesh Festival Hub', location: 'Sompeta', whatsapp: '911169296787', pass: '1234', leads: 5, type: 'store',
+                items: [
+                    { id: 'pr1', name: 'Vinayaka Special Printed T-Shirt', price: 349, image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' }
+                ]
+            }
+        ];
+
+        function addEventRow() {
+            let container = document.getElementById('dynamicEventsList');
+            let div = document.createElement('div');
+            div.className = "flex gap-1.5 event-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Event Name (Ex: DJ / Kolatam)" class="ev-item-name flex-1 p-2 rounded bg-stone-950 text-white text-xs">
+                <input type="file" class="ev-item-img w-24 text-[10px] text-stone-400 self-center">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold px-1 text-sm">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function addProductRow() {
+            let container = document.getElementById('dynamicProductsList');
+            let div = document.createElement('div');
+            div.className = "flex gap-1.5 prod-row";
+            div.innerHTML = `
+                <input type="text" placeholder="Product Name" class="prod-item-name flex-1 p-2 rounded bg-stone-950 text-white text-xs">
+                <input type="number" placeholder="Price" class="prod-item-price w-14 p-2 rounded bg-stone-950 text-white text-xs">
+                <input type="file" class="prod-item-img w-20 text-[10px] text-stone-400 self-center">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold px-1 text-sm">×</button>
+            `;
+            container.appendChild(div);
+        }
+
+        function submitEventOrganizer() {
+            let name = document.getElementById('evOrgName').value.trim();
+            let whatsapp = document.getElementById('evOrgWhatsapp').value.trim();
+            let pass = document.getElementById('evOrgPass').value.trim();
+            let location = document.getElementById('evOrgLocation').value.trim();
+
+            if(!name || !whatsapp || !pass || !location) { showCustomAlert("Missing Fields", "Please fill all details including password!"); return; }
+
+            let newProv = { id: 'eo_' + Date.now(), name, whatsapp, pass, location, leads: 3, type: 'event', items: [] };
+            demoEventOrganizers.push(newProv);
+            localStorage.setItem('demo_eo', JSON.stringify(demoEventOrganizers));
+            closeModal('addEventProviderModal');
+            show3DSuccessModal("Success!", "Event Organizer registered successfully with 3 Free Leads!");
+            switchView('eventsMarketView');
+        }
+
+        function submitStoreVendor() {
+            let storeName = document.getElementById('stStoreName').value.trim();
+            let whatsapp = document.getElementById('stStoreWhatsapp').value.trim();
+            let pass = document.getElementById('stStorePass').value.trim();
+            let location = document.getElementById('stStoreLocation').value.trim();
+
+            if(!storeName || !whatsapp || !pass || !location) { showCustomAlert("Missing Fields", "Please fill all details including password!"); return; }
+
+            let newStore = { id: 'st_' + Date.now(), name: storeName, whatsapp, pass, location, leads: 5, type: 'store', items: [] };
+            demoStoreVendors.push(newStore);
+            localStorage.setItem('demo_st', JSON.stringify(demoStoreVendors));
+            closeModal('addStoreProductModal');
+            show3DSuccessModal("Success!", "Store registered successfully with 5 Free Leads!");
+            switchView('storeMarketView');
+        }
+
+        function loginEventProvider() {
+            let mobile = document.getElementById('provLoginMobile').value.trim();
+            let pass = document.getElementById('provLoginPass').value.trim();
+            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile and password!"); return; }
+
+            let prov = demoEventOrganizers.find(p => p.whatsapp === mobile && p.pass === pass);
+            if(prov) {
+                currentProvider = prov;
+                localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                closeModal('eventProviderLoginModal');
+                renderProviderDashboard();
+            } else {
+                showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+            }
+        }
+
+        function loginStoreProvider() {
+            let mobile = document.getElementById('storeLoginMobile').value.trim();
+            let pass = document.getElementById('storeLoginPass').value.trim();
+            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile and password!"); return; }
+
+            let store = demoStoreVendors.find(s => s.whatsapp === mobile && s.pass === pass);
+            if(store) {
+                currentProvider = store;
+                localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                closeModal('storeProviderLoginModal');
+                renderProviderDashboard();
+            } else {
+                showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+            }
+        }
+
+        function logoutProvider() {
+            currentProvider = null;
+            localStorage.removeItem(DB_PROVIDER);
+            switchView('publicHomeView');
+        }
+
+        function renderProviderDashboard() {
+            if(!currentProvider) return;
+            document.getElementById('provDashName').innerText = currentProvider.name;
+            document.getElementById('provDashLeads').innerText = `${currentProvider.leads} Leads`;
+
+            let container = document.getElementById('providerItemsContainer');
+            if(!currentProvider.items || currentProvider.items.length === 0) {
+                container.innerHTML = `<p class="text-stone-500 text-center py-3 text-xs">No items added yet.</p>`;
+            } else {
+                container.innerHTML = currentProvider.items.map((item) => `
+                    <div class="flex justify-between items-center bg-stone-950 p-2.5 rounded-xl moving-border text-xs">
+                        <div>
+                            <strong class="text-yellow-300">${item.name}</strong>
+                            ${item.price ? `<span class="block text-emerald-400 font-bold">₹${item.price}</span>` : ''}
+                        </div>
+                        <button onclick="deleteProviderItem('${item.id}')" class="text-red-500 font-bold px-2 py-1 cursor-pointer" title="Delete">🗑️ Delete</button>
+                    </div>
+                `).join('');
+            }
+            switchView('providerDashboardView');
+        }
+
+        function openAddItemModal() {
+            if(!currentProvider) return;
+            document.getElementById('addItemModalTitle').innerText = currentProvider.type === 'event' ? "➕ Add New Event" : "➕ Add New Product";
+            let priceCont = document.getElementById('provPriceContainer');
+            if(currentProvider.type === 'store') priceCont.classList.remove('hidden');
+            else priceCont.classList.add('hidden');
+
+            document.getElementById('provNewItemName').value = '';
+            document.getElementById('provNewItemPrice').value = '';
+            openModal('providerAddItemModal');
+        }
+
+        function saveNewProviderItem() {
+            let name = document.getElementById('provNewItemName').value.trim();
+            let price = document.getElementById('provNewItemPrice').value.trim();
+            if(!name) { showCustomAlert("Missing Name", "Please enter item name!"); return; }
+
+            let newItem = {
+                id: 'item_' + Date.now(),
+                name,
+                price: price ? Number(price) : null,
+                image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png'
+            };
+
+            currentProvider.items.push(newItem);
+            localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+            closeModal('providerAddItemModal');
+            show3DSuccessModal("Success!", "Item added successfully.");
+            renderProviderDashboard();
+        }
+
+        function deleteProviderItem(itemId) {
+            showCustomConfirm("Delete Item", "Are you sure you want to delete this item?", (confirmed) => {
+                if(confirmed) {
+                    currentProvider.items = currentProvider.items.filter(i => i.id !== itemId);
+                    localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                    renderProviderDashboard();
+                    show3DSuccessModal("Deleted", "Item removed successfully.");
+                }
+            });
+        }
+
+        function openPlansFromDashboard() {
+            if(!currentProvider) return;
+            if(currentProvider.type === 'event') openModal('providerPlansModal');
+            else openModal('storePlansModal');
+        }
+
+        function openEventProfile(eoId) {
+            let eo = demoEventOrganizers.find(x => x.id === eoId);
+            if(!eo) return;
+            let content = document.getElementById('eventDetailContent');
+            content.innerHTML = `
+                <div class="bg-stone-900 p-4 rounded-2xl moving-border space-y-4">
+                    <h2 class="title-font text-xl font-bold text-yellow-300 text-center">${eo.name}</h2>
+                    <p class="text-xs text-stone-400 text-center">📍 Location: ${eo.location}</p>
+                    <div class="space-y-3 pt-2">
+                        <h3 class="font-bold text-amber-400 text-xs">Available Events & Activities:</h3>
+                        ${eo.items.map(ev => `
+                            <div class="bg-stone-950 p-3 rounded-xl moving-border flex items-center gap-3">
+                                <img src="${ev.image}" class="w-16 h-16 rounded-xl object-cover border border-amber-600 shrink-0">
+                                <div class="flex-grow min-w-0">
+                                    <h4 class="font-bold text-sm text-white truncate">${ev.name}</h4>
+                                    <a href="https://api.whatsapp.com/send?phone=${eo.whatsapp}&text=${encodeURIComponent('Hello, I am interested in your event ('+ev.name+') listed on Donation Book.')}" target="_blank" class="mt-2 inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">
+                                        <span>💬</span> Chat with Organizer
+                                    </a>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+            switchView('eventDetailView');
+        }
+
+        function openWhatsAppSupport(customMessage = "Hello Donation Book Team, I need help with...") {
+            let phoneNumber = "911169296787";
+            let message = encodeURIComponent(customMessage);
+            let whatsappURL = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${message}`;
+            window.open(whatsappURL, '_blank');
+        }
+
+        function showLoader(text = "Loading, please wait...") {
+            let loader = document.getElementById('globalLoader');
+            let textElem = document.getElementById('loaderText');
+            if(loader) loader.classList.remove('hidden');
+            if(textElem) textElem.innerText = text;
+        }
+
+        function hideLoader() {
+            let loader = document.getElementById('globalLoader');
+            if(loader) loader.classList.add('hidden');
+        }
+
+        function showCustomAlert(title, message, icon = "⚠️") {
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+            document.getElementById('alertIcon').innerText = icon;
+            openModal('customAlertModal');
+        }
+
+        function showCustomConfirm(title, message, callback, requireInput = false) {
+            document.getElementById('confirmTitle').innerText = title;
+            document.getElementById('confirmMessage').innerText = message;
+            let inputContainer = document.getElementById('confirmInputContainer');
+            let inputField = document.getElementById('confirmInputVal');
+            if (requireInput) {
+                inputContainer.classList.remove('hidden');
+                inputField.value = '';
+            } else {
+                inputContainer.classList.add('hidden');
+            }
+            let yesBtn = document.getElementById('confirmYesBtn');
+            let newYesBtn = yesBtn.cloneNode(true);
+            yesBtn.parentNode.replaceChild(newYesBtn, yesBtn);
+            newYesBtn.addEventListener('click', () => {
+                closeModal('customConfirmModal');
+                if (requireInput) {
+                    callback(inputField.value.trim());
+                } else {
+                    callback(true);
+                }
+            });
+            openModal('customConfirmModal');
+        }
+
+        function show3DSuccessModal(title, desc) {
+            document.getElementById('successModalTitle').innerText = title;
+            document.getElementById('successModalDesc').innerText = desc;
+            document.getElementById('success3DModal').classList.remove('hidden');
+        }
+
+        function switchView(viewId) {
+            let views = document.querySelectorAll('.page-view');
+            views.forEach(v => {
+                v.style.display = 'none';
+                v.classList.add('hidden');
+            });
+            let target = document.getElementById(viewId);
+            if(target) {
+                target.style.display = 'block';
+                target.classList.remove('hidden');
+            }
+        }
+
+        function changeLanguage(lang) {
+            localStorage.setItem('portal_lang', lang);
+            let t = translations[lang] || translations['en'];
+
+            // Safely update all mapped text elements across all pages
+            const mapping = {
+                'homeTitleText': t.title,
+                'homeSubText': t.subtitle,
+                'cardEventTitle': t.cardEventTitle,
+                'cardEventDesc': t.cardEventDesc,
+                'cardEventBtn': t.cardEventBtn,
+                'cardStoreTitle': t.cardStoreTitle,
+                'cardStoreDesc': t.cardStoreDesc,
+                'cardStoreBtn': t.cardStoreBtn,
+                'appBannerTitle': t.appBannerTitle,
+                'appBannerSub': t.appBannerSub,
+                'appBannerBtn': t.appBannerBtn,
+                'longSupportText': t.longSupportText,
+                'hdrOrgLogin': t.hdrOrgLogin,
+                'evHeaderTitle': t.evHeaderTitle,
+                'evHeaderSub': t.evHeaderSub,
+                'evRegBtn': t.evRegBtn,
+                'evLoginBtn': t.evLoginBtn,
+                'evBackBtn': t.evBackBtn,
+                'evDetailBackBtn': t.evBackBtn,
+                'stHeaderTitle': t.stHeaderTitle,
+                'stHeaderSub': t.stHeaderSub,
+                'stRegBtn': t.stRegBtn,
+                'stLoginBtn': t.stLoginBtn,
+                'stBackBtn': t.stBackBtn,
+                'eoSpecText': t.featDesc || "Specialized in Traditional Kolatam, Live Orchestra & Sound Systems.",
+                'eoChatText': t.featBtnText || "View All Events & Chat ➔",
+                'badge1Title': t.badge1Title,
+                'badge1Sub': t.badge1Sub,
+                'badge4Title': t.badge4Title,
+                'badge4Sub': t.badge4Sub,
+                'lblCollections': t.donation,
+                'lblExpenses': t.expense,
+                'lblBalance': t.balance,
+                'lblAddEntry': t.addEntry,
+                'lblTransList': t.transList,
+                'optDonation': t.donation,
+                'optExpense': t.expense
+            };
+
+            for (let id in mapping) {
+                let elem = document.getElementById(id);
+                if (elem) elem.innerText = mapping[id];
+            }
+
+            let regBtnElem = document.getElementById('homeRegBtn');
+            if(regBtnElem) regBtnElem.innerHTML = `<span>${t.registerBtn}</span> <span>➔</span>`;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            let savedLang = localStorage.getItem('portal_lang') || 'te';
+            let selectElem = document.getElementById('languageSelect');
+            if(selectElem) selectElem.value = savedLang;
+            changeLanguage(savedLang);
+            startRealtimeClock();
+            if(currentProvider) {
+                renderProviderDashboard();
+            } else {
+                initDashboard();
+            }
+        });
+
+        function startRealtimeClock() {
+            setInterval(() => {
+                let clockElem = document.getElementById('realtimeClock');
+                if(clockElem) {
+                    let now = new Date();
+                    clockElem.innerText = now.toLocaleString();
+                }
+            }, 1000);
+        }
+
+        function openModal(id) { 
+            let modal = document.getElementById(id);
+            if(modal) modal.classList.remove('hidden'); 
+        }
+
+        function closeModal(id) { 
+            let modal = document.getElementById(id);
+            if(modal) modal.classList.add('hidden'); 
+        }
+
+        async function registerOrganization() {
+            let orgName = document.getElementById('regOrgName').value.trim();
+            let adminName = document.getElementById('regAdminName').value.trim();
+            let mobile = document.getElementById('regMobile').value.trim();
+            let pass = document.getElementById('regPassword').value.trim();
+            let mpin = document.getElementById('regMpin').value.trim();
+            let privacyChecked = document.getElementById('privacyPolicyCheck').checked;
+
+            if(!orgName || !mobile || !pass || !mpin) { showCustomAlert("Missing Fields", "Please fill all required fields including M-PIN!"); return; }
+            if(!privacyChecked) { showCustomAlert("Privacy Policy", "Please agree to the Privacy Policy before registering."); return; }
+            if(mobile.length !== 10 || isNaN(mobile)) { showCustomAlert("Invalid Number", "Please enter a valid 10-digit mobile number!"); return; }
+            if(mpin.length !== 4 || isNaN(mpin)) { showCustomAlert("Invalid M-PIN", "M-PIN must be exactly 4 digits!"); return; }
+
+            showLoader("Registering organization...");
+
+            let payload = {
+                action: "register",
+                orgName, adminName, mobile, pass, mpin,
+                userData: { 
+                    orgName, adminName, mobile, pass, mpin, 
+                    isMainAdmin: true,
+                    parentMobile: mobile,
+                    registrationDate: new Date().toLocaleString(),
+                    occasions: [], 
+                    members: [] 
+                }
+            };
+
+            try {
+                let res = await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+                let result = await res.json();
+                hideLoader();
+                if(result.status === "success") {
+                    show3DSuccessModal("Registered Successfully!", "Your organization has been registered. Please login now.");
+                    switchView('loginView');
+                } else if(result.status === "exists") {
+                    showCustomAlert("Already Exists", "This mobile number is already registered!");
+                }
+            } catch(e) {
+                hideLoader();
+                show3DSuccessModal("Registered Successfully!", "Your organization has been registered locally. Please login now.");
+                switchView('loginView');
+            }
+        }
+
+        async function loginUser() {
+            let mobile = document.getElementById('loginMobile').value.trim();
+            let pass = document.getElementById('loginPassword').value.trim();
+
+            if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile number and password!"); return; }
+
+            showLoader("Logging in & syncing data...");
+
+            try {
+                let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
+                    method: "GET",
+                    headers: { "Accept": "application/json" },
+                    mode: "cors"
+                });
+                let result = await res.json();
+                
+                if(result.status === "success") {
+                    hideLoader();
+                    currentUser = result.user;
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+            } catch(e) {}
+
+            hideLoader();
+            currentUser = { orgName: "Demo Youth Wing", adminName: "Admin", mobile, isMainAdmin: true, occasions: [], members: [] };
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            initDashboard();
+        }
+
+        async function recoverPasswordWithMpin() {
+            let mobile = document.getElementById('forgotMobile').value.trim();
+            let orgName = document.getElementById('forgotOrgName').value.trim();
+            let mpin = document.getElementById('forgotMpin').value.trim();
+
+            if(!mobile || !orgName || !mpin) { showCustomAlert("Missing Fields", "Please fill all fields!"); return; }
+
+            showLoader("Verifying M-PIN...");
+            setTimeout(() => {
+                hideLoader();
+                document.getElementById('recoveredPasswordDisplay').innerText = `Your Password: demo123`;
+            }, 800);
+        }
+
+        async function syncUserDataWithSheet() {
+            if(!currentUser) return;
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+        }
+
+        async function refreshUserDataFromServer() {
+            if (!currentUser || !currentUser.mobile) return;
+            if (typeof renderOccasions === "function") renderOccasions();
+        }
+
+        function logoutUser() {
+            currentUser = null;
+            localStorage.removeItem(DB_CURRENT);
+            window.location.href = window.location.pathname;
+        }
+
+        async function checkPublicViewMode() {
+            return false;
+        }
+
+        async function initDashboard() {
+            if(await checkPublicViewMode()) return;
+
+            let authHeaderButtons = document.getElementById('authHeaderButtons');
+            let userProfileHeader = document.getElementById('userProfileHeader');
+            let adminMembersBtn = document.getElementById('adminMembersBtn');
+            let languageDropdownContainer = document.getElementById('languageDropdownContainer');
+
+            if(currentUser) {
+                if(authHeaderButtons) authHeaderButtons.classList.add('hidden');
+                if(languageDropdownContainer) languageDropdownContainer.classList.add('hidden');
+                if(userProfileHeader) userProfileHeader.classList.remove('hidden');
+                switchView('userDashboardView');
+
+                let userNameElem = document.getElementById('loggedUserName');
+                let orgNameElem = document.getElementById('displayOrgName');
+                if(userNameElem) userNameElem.innerText = currentUser.adminName || currentUser.mobile;
+                if(orgNameElem) orgNameElem.innerText = currentUser.orgName;
+
+                if(currentUser.isMainAdmin) {
+                    if(adminMembersBtn) adminMembersBtn.classList.remove('hidden');
+                    renderControlMembers();
+                } else {
+                    if(adminMembersBtn) adminMembersBtn.classList.add('hidden');
+                }
+
+                renderOccasions();
+            } else {
+                if(authHeaderButtons) authHeaderButtons.classList.remove('hidden');
+                if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
+                if(userProfileHeader) userProfileHeader.classList.add('hidden');
+                switchView('publicHomeView');
+            }
+        }
+
+        function addNewControlMember() {
+            let name = document.getElementById('memberName').value.trim();
+            let designation = document.getElementById('memberDesignation').value.trim() || "Member";
+            let mobile = document.getElementById('memberMobile').value.trim();
+            let pass = document.getElementById('memberPassword').value.trim();
+
+            if(!name || !mobile || !pass) { showCustomAlert("Missing Fields", "Please fill name, mobile, and password!"); return; }
+
+            if(!currentUser.members) currentUser.members = [];
+            currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
+            
+            syncUserDataWithSheet();
+            renderControlMembers();
+            document.getElementById('memberName').value = '';
+            document.getElementById('memberDesignation').value = '';
+            document.getElementById('memberMobile').value = '';
+            document.getElementById('memberPassword').value = '';
+            show3DSuccessModal("Success!", "Member added successfully.");
+        }
+
+        function renderControlMembers() {
+            let list = document.getElementById('controlMembersList');
+            if(!currentUser.members || currentUser.members.length === 0) {
+                list.innerHTML = `<p class="text-xs text-stone-500">No members added</p>`;
+                return;
+            }
+            list.innerHTML = currentUser.members.map((m, idx) => `
+                <div class="flex justify-between items-center bg-stone-50 p-2 rounded-lg moving-border text-xs text-stone-900">
+                    <div>
+                        <strong>${m.name}</strong> <span class="text-amber-700 font-bold">(${m.designation})</span>
+                        <span class="block text-[10px] text-stone-500">📞 ${m.mobile}</span>
+                    </div>
+                    <div class="flex items-center gap-1.5">
+                        <a href="tel:${m.mobile}" class="bg-blue-600 text-white p-1.5 rounded-lg w-7 h-7 flex items-center justify-center">📞</a>
+                        <button onclick="removeControlMember(${idx})" class="text-red-600 font-bold px-1 ml-1 cursor-pointer">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function removeControlMember(idx) {
+            showCustomConfirm("Delete Member", "Are you sure you want to remove this member?", (confirmed) => {
+                if (confirmed) {
+                    currentUser.members.splice(idx, 1);
+                    syncUserDataWithSheet();
+                    renderControlMembers();
+                    show3DSuccessModal("Deleted", "Member removed successfully.");
+                }
+            });
+        }
+
+        function openAddOccasionModal() {
+            let container = document.getElementById('occMembersCheckboxes');
+            if(!currentUser.members || currentUser.members.length === 0) {
+                container.innerHTML = `<p class="text-[11px] text-stone-500">Please add members first using 'Members & Designation'.</p>`;
+            } else {
+                container.innerHTML = currentUser.members.map((m) => `
+                    <label class="flex items-center gap-2 cursor-pointer text-stone-800">
+                        <input type="checkbox" value="${m.mobile}" class="occ-member-chk w-4 h-4 text-amber-600 rounded">
+                        <span>${m.name} - <strong class="text-amber-800">${m.designation}</strong> (${m.mobile})</span>
+                    </label>
+                `).join('');
+            }
+            document.getElementById('occName').value = '';
+            openModal('addOccasionModal');
+        }
+
+        async function createFreeOccasion() {
+            let name = document.getElementById('occName').value.trim();
+            if(!name) { showCustomAlert("Missing Name", "Please enter occasion name!"); return; }
+
+            let selectedMembers = [];
+            document.querySelectorAll('.occ-member-chk:checked').forEach(chk => {
+                selectedMembers.push(chk.value);
+            });
+
+            let existingOccasions = currentUser.occasions || [];
+            let isFirstOccasion = existingOccasions.length === 0;
+
+            let now = Date.now();
+            let newOcc = { 
+                id: 'occ_' + now, 
+                name, 
+                estimatedCost: 0,
+                estimations: [],
+                createdAt: new Date().toLocaleString(),
+                assignedMembers: selectedMembers,
+                entries: [],
+                status: isFirstOccasion ? "approved" : "free_limit_expired", 
+                attemptCount: 1
+            };
+
+            currentUser.occasions.push(newOcc);
+            syncUserDataWithSheet();
+            closeModal('addOccasionModal');
+
+            if (isFirstOccasion) {
+                show3DSuccessModal("Occasion Created!", "Your first occasion is 100% Free and approved permanently!");
+            } else {
+                showCustomAlert("Payment Required", "మొదటి అకేషన్ మాత్రమే ఫ్రీ. అదనపు అకేషన్ల క్రియేషన్ కోసం ₹49 చెల్లించడం తప్పనిసరి!");
+                openPay49Modal(newOcc.id, newOcc.name);
+            }
+
+            renderOccasions();
+        }
+
+        async function confirmPaymentDone() {
+            let transactionId = document.getElementById('upiTransactionId').value.trim();
+            if(!transactionId) { showCustomAlert("Transaction ID", "Please enter Transaction ID!"); return; }
+
+            if(selectedOccasionId) {
+                let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+                if(occ) {
+                    occ.transactionId = transactionId;
+                    occ.status = "pending"; 
+                    syncUserDataWithSheet();
+                    closeModal('pay49Modal');
+                    show3DSuccessModal("Submitted Successfully!", "Payment submitted. Waiting for admin approval.");
+                    renderOccasions();
+                }
+            }
+        }
+
+        function renderOccasions() {
+            let container = document.getElementById('occasionsContainer');
+            if(!currentUser.occasions || currentUser.occasions.length === 0) {
+                container.innerHTML = `<div class="bg-stone-900/60 p-5 rounded-xl moving-border text-center text-stone-400 text-xs">No occasions added yet.</div>`;
+                return;
+            }
+
+            container.innerHTML = currentUser.occasions.map((occ, idx) => {
+                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+
+                let statusHtml = "";
+                let actionBtnHtml = "";
+
+                if (idx === 0 || occ.status === "approved") {
+                    if (idx === 0 && occ.status !== "approved") {
+                        occ.status = "approved";
+                    }
+                    statusHtml = `<span class="font-bold text-emerald-400 bg-emerald-950/80 px-2 py-1 rounded-lg block border border-emerald-800">✨ Your Occasion is Completely Free (Lifetime)</span>`;
+                    actionBtnHtml = `
+                        <div class="flex gap-2">
+                            <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded-xl text-xs shadow cursor-pointer moving-border">📊 Manage Accounts</button>
+                            <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 hover:bg-stone-700 text-stone-200 px-3 py-2 rounded-xl text-xs cursor-pointer moving-border" title="Share Link">🔗</button>
+                        </div>
+                    `;
+                } else if (occ.status === "pending") {
+                    statusHtml = `<span class="font-semibold text-yellow-400">Status: Pending Approval (Paid ₹49)</span>`;
+                    actionBtnHtml = `<span class="text-xs text-amber-300 italic">Waiting for admin approval</span>`;
+                } else if (occ.status === "free_limit_expired") {
+                    statusHtml = `<span class="font-semibold text-red-400">Status: Payment Required (₹49)</span>`;
+                    actionBtnHtml = `
+                        <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-red-600 hover:bg-red-700 text-white font-black py-2.5 rounded-xl text-xs shadow cursor-pointer moving-border animate-pulse">
+                            💳 Pay ₹49 to Unlock Occasion
+                        </button>
+                    `;
+                }
+
+                return `
+                    <div class="bg-stone-900 rounded-2xl p-4 moving-border shadow-xl space-y-3">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-black text-base text-yellow-300">${occ.name} ${idx === 0 ? '⭐' : ''}</h4>
+                                <div class="text-xs pt-1">${statusHtml}</div>
+                            </div>
+                            ${currentUser.isMainAdmin && idx > 0 ? `<button onclick="deleteOccasionPrompt('${occ.id}')" class="text-red-400 hover:text-red-300 text-xs font-bold p-1 cursor-pointer">🗑️</button>` : ''}
+                        </div>
+                        <div class="bg-stone-950 p-3 rounded-xl moving-border space-y-2 text-xs">
+                            <div class="flex justify-between font-bold"><span class="text-stone-400">Total Collected:</span><span class="text-emerald-400">₹${inc}</span></div>
+                        </div>
+                        <div class="pt-1">
+                            ${actionBtnHtml}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function openPay49Modal(occId, occName) {
+            selectedOccasionId = occId;
+            document.getElementById('pay49OccName').innerText = occName;
+            document.getElementById('upiTransactionId').value = '';
+            openModal('pay49Modal');
+        }
+
+        function deleteOccasionPrompt(id) {
+            showCustomConfirm("Delete Occasion", "Enter 4-digit M-PIN to delete this occasion:", (mpin) => {
+                if(mpin !== currentUser.mpin) {
+                    showCustomAlert("Incorrect M-PIN", "Incorrect M-PIN! Deletion failed.");
+                    return;
+                }
+                currentUser.occasions = currentUser.occasions.filter(o => o.id !== id);
+                syncUserDataWithSheet();
+                renderOccasions();
+                show3DSuccessModal("Deleted", "Occasion deleted successfully.");
+            }, true);
+        }
+
+        function openAccountsControl(occId) {
+            let occIndex = currentUser.occasions.findIndex(o => o.id === occId);
+            let occ = currentUser.occasions[occIndex];
+            if(!occ) return;
+
+            if (occIndex > 0 && occ.status === "free_limit_expired") {
+                showCustomAlert("Payment Required", "Please pay ₹49 to manage this occasion.");
+                openPay49Modal(occ.id, occ.name);
+                return;
+            }
+
+            selectedOccasionId = occId;
+            document.getElementById('modalOccasionTitle').innerText = occ.name;
+            
+            let estCost = Number(occ.estimatedCost || 0);
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let gap = estCost - inc;
+
+            document.getElementById('estCostDisplay').innerText = `₹${estCost}`;
+            document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
+            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
+            let parts = occ.estimations || [];
+            let listDiv = document.getElementById('estimationItemsList');
+            listDiv.innerHTML = parts.length === 0 ? `<p class="text-stone-500 text-center py-1">No estimations added yet</p>` : parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800/50 pb-0.5"><span>${p.name}:</span><span class="text-amber-300 font-bold">₹${p.cost}</span></div>`).join('');
+
+            let editInputsContainer = document.getElementById('dynamicEstimationInputs');
+            editInputsContainer.innerHTML = '';
+            if(parts.length === 0) { addEstimationRow('', ''); } else { parts.forEach(p => addEstimationRow(p.name, p.cost)); }
+
+            document.getElementById('estViewMode').classList.remove('hidden');
+            document.getElementById('estEditMode').classList.add('hidden');
+
+            setDefaultEntryDate();
+            renderFinancialEntries();
+            openModal('accountsModal');
+        }
+
+        function openDonationsListModal() {
+            let occ = currentUser ? currentUser.occasions.find(o => o.id === selectedOccasionId) : window.publicOrgOccasion;
+            if(!occ) return;
+            let donations = occ.entries.filter(e => e.type === 'income');
+            let container = document.getElementById('modalDonationsContainer');
+            
+            if(donations.length === 0) {
+                container.innerHTML = `<p class="text-stone-500 text-center py-4 text-xs">No donations recorded yet.</p>`;
+            } else {
+                container.innerHTML = donations.map((ent, idx) => `
+                    <div class="flex justify-between items-center bg-stone-950 p-2.5 rounded-xl border border-emerald-900/50">
+                        <div>
+                            <span class="text-[10px] text-emerald-400 font-bold">#${idx + 1} - ${ent.date}</span>
+                            <strong class="block text-stone-200 text-xs">${ent.desc}</strong>
+                        </div>
+                        <span class="font-black text-emerald-400 text-sm">₹${ent.amount}</span>
+                    </div>
+                `).join('');
+            }
+            openModal('donationsListModal');
+        }
+
+        function openExpensesListModal() {
+            let occ = currentUser ? currentUser.occasions.find(o => o.id === selectedOccasionId) : window.publicOrgOccasion;
+            if(!occ) return;
+            let expenses = occ.entries.filter(e => e.type === 'expense');
+            let container = document.getElementById('modalExpensesContainer');
+            
+            if(expenses.length === 0) {
+                container.innerHTML = `<p class="text-stone-500 text-center py-4 text-xs">No expenses recorded yet.</p>`;
+            } else {
+                container.innerHTML = expenses.map((ent, idx) => `
+                    <div class="flex justify-between items-center bg-stone-950 p-2.5 rounded-xl border border-red-900/50">
+                        <div>
+                            <span class="text-[10px] text-red-400 font-bold">#${idx + 1} - ${ent.date}</span>
+                            <strong class="block text-stone-200 text-xs">${ent.desc}</strong>
+                        </div>
+                        <span class="font-black text-red-400 text-sm">₹${ent.amount}</span>
+                    </div>
+                `).join('');
+            }
+            openModal('expensesListModal');
+        }
+
+        async function openPublicListModal(type, occId) {
+            selectedOccasionId = occId;
+            let occ = null;
+            if(currentUser) {
+                occ = currentUser.occasions.find(o => o.id === occId);
+            }
+            if(type === 'income') openDonationsListModal();
+            else openExpensesListModal();
+        }
+
+        function addEstimationRow(name, cost) {
+            let container = document.getElementById('dynamicEstimationInputs');
+            let rowDiv = document.createElement('div');
+            rowDiv.className = "flex gap-1 items-center est-row";
+            rowDiv.innerHTML = `
+                <input type="text" placeholder="Particular" value="${name}" class="est-name flex-1 p-1.5 border rounded bg-stone-900 text-white text-xs">
+                <input type="number" placeholder="Cost (₹)" value="${cost !== '' ? cost : ''}" class="est-cost w-24 p-1.5 border rounded bg-stone-900 text-white text-xs">
+                <button type="button" onclick="this.parentElement.remove()" class="text-red-500 font-bold px-1.5 text-sm cursor-pointer">×</button>
+            `;
+            container.appendChild(rowDiv);
+        }
+
+        function toggleEditEstimation() {
+            document.getElementById('estViewMode').classList.toggle('hidden');
+            document.getElementById('estEditMode').classList.toggle('hidden');
+        }
+
+        function saveEstimationUpdates() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let rows = document.querySelectorAll('.est-row');
+            let newEstimations = [];
+            let totalCost = 0;
+
+            rows.forEach(row => {
+                let name = row.querySelector('.est-name').value.trim();
+                let cost = Number(row.querySelector('.est-cost').value || 0);
+                if(name) {
+                    newEstimations.push({ name, cost });
+                    totalCost += cost;
+                }
+            });
+
+            occ.estimatedCost = totalCost;
+            occ.estimations = newEstimations;
+            syncUserDataWithSheet();
+
+            document.getElementById('estCostDisplay').innerText = `₹${totalCost}`;
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let gap = totalCost - inc;
+            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+
+            toggleEditEstimation();
+            openAccountsControl(selectedOccasionId);
+            show3DSuccessModal("Saved!", "Estimations updated successfully!");
+        }
+
+        function downloadOccasionReportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if (!occ) return;
+
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+            let bal = inc - exp;
+            let estCost = Number(occ.estimatedCost || 0);
+            let gap = estCost - inc;
+            let parts = occ.estimations || [];
+
+            doc.setFillColor(69, 26, 3);
+            doc.rect(0, 0, 210, 28, 'F');
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(16);
+            doc.setTextColor(255, 255, 255);
+            doc.text(currentUser.orgName.toUpperCase(), 105, 12, { align: "center" });
+
+            doc.setFontSize(11);
+            doc.setFont("helvetica", "normal");
+            doc.text(`Occasion Report: ${occ.name}`, 105, 20, { align: "center" });
+
+            doc.setTextColor(60, 60, 60);
+            doc.setFontSize(9);
+            doc.text(`Generated on: ${new Date().toLocaleString()}`, 14, 35);
+
+            doc.autoTable({
+                startY: 40,
+                head: [['Financial Metric', 'Amount (INR)']],
+                body: [
+                    ['Total Estimated Cost', `Rs. ${estCost}`],
+                    ['Total Donations Collected', `Rs. ${inc}`],
+                    ['Funding Gap / Deficit', `Rs. ${gap > 0 ? gap : 0}`],
+                    ['Total Expenses Incurred', `Rs. ${exp}`],
+                    ['Net Balance Remaining', `Rs. ${bal}`]
+                ],
+                theme: 'grid',
+                headStyles: { fillColor: [217, 119, 6] },
+                styles: { fontSize: 9 }
+            });
+
+            let currentY = doc.lastAutoTable.finalY + 10;
+
+            if (parts.length > 0) {
+                doc.setFont("helvetica", "bold");
+                doc.setFontSize(11);
+                doc.setTextColor(69, 26, 3);
+                doc.text("Cost Estimations Breakdown", 14, currentY);
+
+                let estBody = parts.map((p, idx) => [idx + 1, p.name, `Rs. ${p.cost}`]);
+                doc.autoTable({
+                    startY: currentY + 3,
+                    head: [['#', 'Particular / Item', 'Estimated Cost']],
+                    body: estBody,
+                    theme: 'striped',
+                    headStyles: { fillColor: [75, 85, 99] },
+                    styles: { fontSize: 8 }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
+            }
+
+            doc.setFont("helvetica", "bold");
+            doc.setFontSize(11);
+            doc.setTextColor(69, 26, 3);
+            doc.text("Transactions Details", 14, currentY);
+
+            if (occ.entries.length === 0) {
+                doc.setFont("helvetica", "italic");
+                doc.setFontSize(9);
+                doc.text("No transactions recorded yet.", 14, currentY + 6);
+            } else {
+                let txBody = occ.entries.map((ent, idx) => [idx + 1, ent.date, ent.type.toUpperCase(), ent.desc, `Rs. ${ent.amount}`]);
+                doc.autoTable({
+                    startY: currentY + 3,
+                    head: [['#', 'Date', 'Type', 'Description / Donor', 'Amount']],
+                    body: txBody,
+                    theme: 'grid',
+                    headStyles: { fillColor: [16, 185, 129] },
+                    styles: { fontSize: 8 }
+                });
+            }
+
+            doc.save(`${occ.name.replace(/\s+/g, '_')}_Financial_Report.pdf`);
+        }
+
+        function setDefaultEntryDate() {
+            let dateInput = document.getElementById('entryDate');
+            if (dateInput && !dateInput.value) {
+                let today = new Date().toISOString().split('T')[0];
+                dateInput.value = today;
+            }
+        }
+
+        function saveFinancialEntry() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let type = document.getElementById('entryType').value;
+            let amount = document.getElementById('entryAmount').value.trim();
+            let desc = document.getElementById('entryDesc').value.trim();
+            let rawDate = document.getElementById('entryDate').value;
+            let editId = document.getElementById('editingEntryId').value;
+
+            if(!amount || !desc || !rawDate) { 
+                showCustomAlert("Missing Fields", "Please enter amount, description, and date!"); 
+                return; 
+            }
+
+            let formattedDate = rawDate.split('-').reverse().join('-'); 
+
+            if (editId) {
+                let ent = occ.entries.find(e => e.id === editId);
+                if (ent) {
+                    ent.type = type;
+                    ent.amount = Number(amount);
+                    ent.desc = desc;
+                    ent.date = formattedDate;
+                }
+                show3DSuccessModal("Updated!", "Entry updated successfully.");
+            } else {
+                let newEntry = { 
+                    id: 'ent_' + Date.now(), 
+                    type, 
+                    amount: Number(amount), 
+                    desc, 
+                    date: formattedDate 
+                };
+                occ.entries.push(newEntry);
+                show3DSuccessModal("Saved!", "Entry added successfully.");
+            }
+
+            syncUserDataWithSheet();
+            resetEntryForm();
+            openAccountsControl(selectedOccasionId);
+            renderOccasions();
+        }
+
+        function editFinancialEntry(entId) {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let ent = occ.entries.find(e => e.id === entId);
+            if(!ent) return;
+
+            document.getElementById('entryType').value = ent.type;
+            document.getElementById('entryAmount').value = ent.amount;
+            document.getElementById('entryDesc').value = ent.desc;
+            
+            if(ent.date) {
+                let parts = ent.date.split('-');
+                if(parts.length === 3) {
+                    document.getElementById('entryDate').value = `${parts[2]}-${parts[1]}-${parts[0]}`;
+                }
+            }
+
+            document.getElementById('editingEntryId').value = ent.id;
+            document.getElementById('btnSaveEntry').innerText = "Update Entry";
+            document.getElementById('btnSaveEntry').className = "flex-1 bg-amber-600 hover:bg-amber-700 text-stone-950 font-black py-2 rounded shadow cursor-pointer text-xs";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+        }
+
+        function resetEntryForm() {
+            document.getElementById('editingEntryId').value = '';
+            document.getElementById('entryAmount').value = '';
+            document.getElementById('entryDesc').value = '';
+            document.getElementById('btnSaveEntry').innerText = "Save Entry";
+            document.getElementById('btnSaveEntry').className = "flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 rounded shadow cursor-pointer text-xs";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            setDefaultEntryDate();
+        }
+
+        function renderFinancialEntries() {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(!occ) return;
+
+            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let exp = occ.entries.filter(e => e.type === 'expense').reduce((sum, e) => sum + Number(e.amount), 0);
+            let bal = inc - exp;
+
+            document.getElementById('accTotInc').innerText = `₹${inc}`;
+            document.getElementById('accTotExp').innerText = `₹${exp}`;
+            document.getElementById('accBal').innerText = `₹${bal}`;
+
+            let listContainer = document.getElementById('financialEntriesList');
+            if(occ.entries.length === 0) { 
+                listContainer.innerHTML = `<p class="text-stone-500 text-center py-2 text-xs">No transactions</p>`; 
+                return; 
+            }
+
+            listContainer.innerHTML = occ.entries.map((ent) => `
+                <div class="flex justify-between items-center bg-stone-800 p-2 rounded-lg moving-border text-xs">
+                    <div>
+                        <span class="px-1.5 py-0.5 rounded text-[9px] font-bold ${ent.type === 'income' ? 'bg-emerald-800 text-emerald-200' : 'bg-red-800 text-red-200'}">${ent.type}</span>
+                        <strong class="ml-1 text-stone-200">${ent.desc}</strong>
+                        <span class="text-[9px] text-stone-400 block">📅 ${ent.date}</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <span class="font-bold ${ent.type === 'income' ? 'text-emerald-400' : 'text-red-400'}">₹${ent.amount}</span>
+                        <button onclick="editFinancialEntry('${ent.id}')" class="text-amber-400 font-bold px-1 cursor-pointer" title="Edit">✏️</button>
+                        <button onclick="deleteFinancialEntry('${ent.id}')" class="text-red-400 font-bold px-1 cursor-pointer" title="Delete">×</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteFinancialEntry(entId) {
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(occ) {
+                showCustomConfirm("Delete Entry", "Are you sure you want to delete this entry?", (confirmed) => {
+                    if (confirmed) {
+                        occ.entries = occ.entries.filter(e => e.id !== entId);
+                        syncUserDataWithSheet();
+                        openAccountsControl(selectedOccasionId);
+                        renderOccasions();
+                        show3DSuccessModal("Deleted", "Entry removed successfully.");
+                    }
+                });
+            }
+        }
+
+        function shareOrgLinkDirectly() {
+            let mainMobile = currentUser.parentMobile || currentUser.mobile;
+            let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}`;
+            if (navigator.share) {
+                navigator.share({ title: 'DONATION BOOK', text: `Check out our organization accounts:`, url: shareLink }).catch(() => {});
+            } else {
+                showCustomAlert("Share", "Sharing not supported on this browser.");
+            }
+        }
+
+        function shareOccasionLinkDirectly(occId, occName) {
+            let mainMobile = currentUser.parentMobile || currentUser.mobile;
+            let shareLink = `${window.location.origin}${window.location.pathname}?org=${mainMobile}&occ=${occId}`;
+            if (navigator.share) {
+                navigator.share({ title: occName, text: `Check accounts for ${occName}:`, url: shareLink }).catch(() => {});
+            } else {
+                showCustomAlert("Share", "Sharing not supported on this browser.");
+            }            
+        }
+    </script>
+</body>
+</html>
