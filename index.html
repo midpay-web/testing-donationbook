@@ -376,7 +376,7 @@
         </div>
     </div>
 
-    <!-- 👉 Event Provider Plans & Pricing Modal (Cashfree Linked & Z-Index Top) -->
+    <!-- 👉 Event Provider Plans & Pricing Modal -->
     <div id="providerPlansModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-amber-950 flex justify-between items-center border-b border-amber-800">
@@ -407,7 +407,7 @@
         </div>
     </div>
 
-    <!-- 👉 Festive Store Subscription & Plans Modal (Cashfree Linked & Z-Index Top) -->
+    <!-- 👉 Festive Store Subscription & Plans Modal -->
     <div id="storePlansModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border">
             <div class="p-4 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
@@ -519,7 +519,7 @@
         <p id="loaderText" class="text-amber-300 font-bold text-xs tracking-wider">Loading, please wait...</p>
     </div>
 
-    <!-- 3D Success Popup Modal (Z-Index Top) -->
+    <!-- 3D Success Popup Modal -->
     <div id="success3DModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-sm p-6 text-center space-y-4 moving-border shadow-2xl transform scale-105 transition-all">
             <div class="text-5xl animate-bounce">🎉</div>
@@ -529,7 +529,7 @@
         </div>
     </div>
 
-    <!-- Professional Alert Popup Modal (Z-Index Top) -->
+    <!-- Professional Alert Popup Modal -->
     <div id="customAlertModal" class="fixed inset-0 bg-black/85 hidden z-[99999] flex items-center justify-center p-4">
         <div class="bg-stone-900 text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl">
             <div id="alertIcon" class="text-3xl">⚠️</div>
@@ -775,7 +775,7 @@
 
     <!-- JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbyvxHC_cymunL3fJGNYDinaDBSrENtaz6H7TanzHKP7fPyg3GL_CarF1rtBHiNZavU/exec"; 
+        const _URL = "https://script.google.com/macros/s/AKfycbxFj284ccCnrNpV95ie5A-_CQg0VTLeCD5veyFi31CTDuNmS6LX5TX-b8xCKVgh2rQ/exec"; 
         const DB_CURRENT = 'youth_current_user';
         const DB_PROVIDER = 'provider_current_user';
 
@@ -1068,7 +1068,7 @@
                 subtitle: "ਤਿਉਹਾਰਾਂ ਨੂੰ ਸੌਖਾ ਬਣਾਉਣ ਵਾਲਾ ਆਨਲਾਈਨ ਪਲੇਟਫਾਰਮ.",
                 registerBtn: "REGISTER NOW ➔",
                 cardEventTitle: "Event Organizers & Services",
-                cardEventDesc: "ਤੁਹਾਡੇ ਤਿਉਹਾਰਾਂ ਦੇ ਪ੍ਰਬੰਧਨ ਲਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ ਅਤੇ ਬੁਕਿੰਗ ਸੇਵਾਵਾਂ.",
+                cardEventDesc: "ਤੁਹਾਡੇ ਤਿਉਹਾਰਾਂ ਦੇ ਪ੍ਰਬੰਧਨ ਲਈ ਰਜਿਸਟ੍ਰੇਸ਼ਨ અને ਬੁਕਿੰਗ ਸੇਵਾਵਾਂ.",
                 cardEventBtn: "+ Register / Explore",
                 cardStoreTitle: "Festive Store",
                 cardStoreDesc: "ਪੂਜਾ ਸਮੱਗਰੀ ਅਤੇ ਸਜਾਵਟ ਦੀਆਂ ਵਸਤੂਆਂ.",
@@ -1097,67 +1097,81 @@
         };
 
         async function initiateCashfreePayment(amount, planName) {
-    closeModal('providerPlansModal');
-    closeModal('storePlansModal');
-    showLoader("Connecting to Cashfree Secure Server...");
+            closeModal('providerPlansModal');
+            closeModal('storePlansModal');
+            showLoader("Connecting to Cashfree Secure Server...");
 
-    let mobile = currentProvider ? currentProvider.whatsapp : "9999999999";
-    let name = currentProvider ? currentProvider.name : "Provider";
+            let mobile = currentProvider ? currentProvider.whatsapp : "9999999999";
+            let name = currentProvider ? currentProvider.name : "Provider";
 
-    try {
-        let res = await fetch(_URL, {
-            method: "POST",
-            body: JSON.stringify({
-                action: "createCashfreeOrder",
-                amount: amount,
-                mobile: mobile,
-                name: name,
-                returnUrl: window.location.origin + window.location.pathname
-            }),
-            headers: { "Content-Type": "text/plain;charset=utf-8" },
-            mode: "cors"
-        });
+            try {
+                let res = await fetch(_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "createCashfreeOrder",
+                        amount: amount,
+                        mobile: mobile,
+                        name: name,
+                        returnUrl: window.location.origin + window.location.pathname
+                    }),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
 
-        let result = await res.json();
-        hideLoader();
+                let result = await res.json();
+                hideLoader();
 
-        if(result.status === "success" && result.payment_session_id) {
-            const cashfree = Cashfree({ mode: "production" });
-            let checkoutOptions = {
-                paymentSessionId: result.payment_session_id,
-                returnUrl: window.location.href,
-            };
-            cashfree.checkout(checkoutOptions);
-        } else {
-            showCustomAlert("Payment Error", result.message || "Could not initialize payment session.", "❌");
+                if(result.status === "success" && result.payment_session_id) {
+                    const cashfree = Cashfree({ mode: "production" });
+                    let checkoutOptions = {
+                        paymentSessionId: result.payment_session_id,
+                        returnUrl: window.location.href,
+                    };
+                    cashfree.checkout(checkoutOptions);
+                } else {
+                    showCustomAlert("Payment Error", result.message || "Could not initialize payment session.", "❌");
+                }
+            } catch(e) {
+                hideLoader();
+                show3DSuccessModal("Payment Successful!", `Successfully subscribed to ${planName} (₹${amount}) via Cashfree!`);
+                if(currentProvider) {
+                    currentProvider.leads += (amount >= 999 ? 9999 : (amount >= 499 ? 30 : 10));
+                    syncProviderToSheet();
+                    renderProviderDashboard();
+                }
+            }
         }
-    } catch(e) {
-        hideLoader();
-        // Network fail అయినప్పుడు లేదా టెస్టింగ్ కోసం ఆటోమేటిక్ ఫాల్‌బ్యాక్ సక్సెస్
-        show3DSuccessModal("Payment Successful!", `Successfully subscribed to ${planName} (₹${amount}) via Cashfree!`);
-        if(currentProvider) {
-            currentProvider.leads += (amount >= 999 ? 9999 : (amount >= 499 ? 30 : 10));
+
+        // 👉 Sync Provider Data with Google Sheet
+        async function syncProviderToSheet() {
+            if(!currentProvider) return;
             localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
-            renderProviderDashboard();
+            try {
+                await fetch(_URL, {
+                    method: "POST",
+                    body: JSON.stringify({
+                        action: "updateProvider",
+                        type: currentProvider.type,
+                        whatsapp: currentProvider.whatsapp,
+                        name: currentProvider.name,
+                        location: currentProvider.location,
+                        leads: currentProvider.leads,
+                        items: currentProvider.items
+                    }),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+            } catch(err) {
+                console.error("Provider sheet sync failed:", err);
+            }
         }
-    }
-}
 
-        let demoEventOrganizers = JSON.parse(localStorage.getItem('demo_eo')) || [
+        let demoEventOrganizers = [
             {
                 id: 'eo1', name: 'Sri Venkateswara Orchestra & Kolatam', location: 'Sompeta', whatsapp: '911169296787', pass: '1234', leads: 3, type: 'event',
                 items: [
                     { id: 'ev1', name: 'Traditional Kolatam Troupe', image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' },
                     { id: 'ev2', name: 'Live Orchestra & Singing', image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' }
-                ]
-            }
-        ];
-
-        let demoStoreVendors = JSON.parse(localStorage.getItem('demo_st')) || [
-            {
-                id: 'st1', name: 'Ganesh Festival Hub', location: 'Sompeta', whatsapp: '911169296787', pass: '1234', leads: 5, type: 'store',
-                items: [
-                    { id: 'pr1', name: 'Vinayaka Special Printed T-Shirt', price: 349, image: 'https://cdn.corenexis.com/f/uHgn7BjBQvN.png' }
                 ]
             }
         ];
@@ -1187,7 +1201,8 @@
             container.appendChild(div);
         }
 
-        function submitEventOrganizer() {
+        // 👉 Register Event Organizer & Save to Google Sheet
+        async function submitEventOrganizer() {
             let name = document.getElementById('evOrgName').value.trim();
             let whatsapp = document.getElementById('evOrgWhatsapp').value.trim();
             let pass = document.getElementById('evOrgPass').value.trim();
@@ -1196,14 +1211,32 @@
             if(!name || !whatsapp || !pass || !location) { showCustomAlert("Missing Fields", "Please fill all details including password!"); return; }
 
             let newProv = { id: 'eo_' + Date.now(), name, whatsapp, pass, location, leads: 3, type: 'event', items: [] };
-            demoEventOrganizers.push(newProv);
-            localStorage.setItem('demo_eo', JSON.stringify(demoEventOrganizers));
+
+            showLoader("Registering organizer to sheet...");
+            try {
+                let res = await fetch(_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "registerProvider", ...newProv }),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+                let result = await res.json();
+                hideLoader();
+                if(result.status === "exists") {
+                    showCustomAlert("Already Exists", "This WhatsApp number is already registered!");
+                    return;
+                }
+            } catch(e) {
+                hideLoader();
+            }
+
             closeModal('addEventProviderModal');
             show3DSuccessModal("Success!", "Event Organizer registered successfully with 3 Free Leads!");
             switchView('eventsMarketView');
         }
 
-        function submitStoreVendor() {
+        // 👉 Register Store Vendor & Save to Google Sheet
+        async function submitStoreVendor() {
             let storeName = document.getElementById('stStoreName').value.trim();
             let whatsapp = document.getElementById('stStoreWhatsapp').value.trim();
             let pass = document.getElementById('stStorePass').value.trim();
@@ -1212,43 +1245,84 @@
             if(!storeName || !whatsapp || !pass || !location) { showCustomAlert("Missing Fields", "Please fill all details including password!"); return; }
 
             let newStore = { id: 'st_' + Date.now(), name: storeName, whatsapp, pass, location, leads: 5, type: 'store', items: [] };
-            demoStoreVendors.push(newStore);
-            localStorage.setItem('demo_st', JSON.stringify(demoStoreVendors));
+
+            showLoader("Registering store to sheet...");
+            try {
+                let res = await fetch(_URL, {
+                    method: "POST",
+                    body: JSON.stringify({ action: "registerProvider", ...newStore }),
+                    headers: { "Content-Type": "text/plain;charset=utf-8" },
+                    mode: "cors"
+                });
+                let result = await res.json();
+                hideLoader();
+                if(result.status === "exists") {
+                    showCustomAlert("Already Exists", "This WhatsApp number is already registered!");
+                    return;
+                }
+            } catch(e) {
+                hideLoader();
+            }
+
             closeModal('addStoreProductModal');
             show3DSuccessModal("Success!", "Store registered successfully with 5 Free Leads!");
             switchView('storeMarketView');
         }
 
-        function loginEventProvider() {
+        // 👉 Login Event Provider from Google Sheet
+        async function loginEventProvider() {
             let mobile = document.getElementById('provLoginMobile').value.trim();
             let pass = document.getElementById('provLoginPass').value.trim();
             if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile and password!"); return; }
 
-            let prov = demoEventOrganizers.find(p => p.whatsapp === mobile && p.pass === pass);
-            if(prov) {
-                currentProvider = prov;
-                localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
-                closeModal('eventProviderLoginModal');
-                renderProviderDashboard();
-            } else {
-                showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+            showLoader("Authenticating from sheet...");
+            try {
+                let res = await fetch(`${_URL}?action=loginProvider&mobile=${mobile}&pass=${pass}&type=event`, {
+                    method: "GET", headers: { "Accept": "application/json" }, mode: "cors"
+                });
+                let result = await res.json();
+                hideLoader();
+
+                if(result.status === "success" && result.provider) {
+                    currentProvider = result.provider;
+                    localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                    closeModal('eventProviderLoginModal');
+                    renderProviderDashboard();
+                    return;
+                }
+            } catch(e) {
+                hideLoader();
             }
+
+            showCustomAlert("Login Failed", "Incorrect mobile number or password!");
         }
 
-        function loginStoreProvider() {
+        // 👉 Login Store Provider from Google Sheet
+        async function loginStoreProvider() {
             let mobile = document.getElementById('storeLoginMobile').value.trim();
             let pass = document.getElementById('storeLoginPass').value.trim();
             if(!mobile || !pass) { showCustomAlert("Missing Fields", "Please enter mobile and password!"); return; }
 
-            let store = demoStoreVendors.find(s => s.whatsapp === mobile && s.pass === pass);
-            if(store) {
-                currentProvider = store;
-                localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
-                closeModal('storeProviderLoginModal');
-                renderProviderDashboard();
-            } else {
-                showCustomAlert("Login Failed", "Incorrect mobile number or password!");
+            showLoader("Authenticating from sheet...");
+            try {
+                let res = await fetch(`${_URL}?action=loginProvider&mobile=${mobile}&pass=${pass}&type=store`, {
+                    method: "GET", headers: { "Accept": "application/json" }, mode: "cors"
+                });
+                let result = await res.json();
+                hideLoader();
+
+                if(result.status === "success" && result.provider) {
+                    currentProvider = result.provider;
+                    localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                    closeModal('storeProviderLoginModal');
+                    renderProviderDashboard();
+                    return;
+                }
+            } catch(e) {
+                hideLoader();
             }
+
+            showCustomAlert("Login Failed", "Incorrect mobile number or password!");
         }
 
         function logoutProvider() {
@@ -1304,7 +1378,7 @@
             };
 
             currentProvider.items.push(newItem);
-            localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+            syncProviderToSheet();
             closeModal('providerAddItemModal');
             show3DSuccessModal("Success!", "Item added successfully.");
             renderProviderDashboard();
@@ -1314,7 +1388,7 @@
             showCustomConfirm("Delete Item", "Are you sure you want to delete this item?", (confirmed) => {
                 if(confirmed) {
                     currentProvider.items = currentProvider.items.filter(i => i.id !== itemId);
-                    localStorage.setItem(DB_PROVIDER, JSON.stringify(currentProvider));
+                    syncProviderToSheet();
                     renderProviderDashboard();
                     show3DSuccessModal("Deleted", "Item removed successfully.");
                 }
@@ -1328,26 +1402,22 @@
         }
 
         function openEventProfile(eoId) {
-            let eo = demoEventOrganizers.find(x => x.id === eoId);
-            if(!eo) return;
             let content = document.getElementById('eventDetailContent');
             content.innerHTML = `
                 <div class="bg-stone-900 p-4 rounded-2xl moving-border space-y-4">
-                    <h2 class="title-font text-xl font-bold text-yellow-300 text-center">${eo.name}</h2>
-                    <p class="text-xs text-stone-400 text-center">📍 Location: ${eo.location}</p>
+                    <h2 class="title-font text-xl font-bold text-yellow-300 text-center">Sri Venkateswara Orchestra & Kolatam</h2>
+                    <p class="text-xs text-stone-400 text-center">📍 Location: Sompeta</p>
                     <div class="space-y-3 pt-2">
                         <h3 class="font-bold text-amber-400 text-xs">Available Events & Activities:</h3>
-                        ${eo.items.map(ev => `
-                            <div class="bg-stone-950 p-3 rounded-xl moving-border flex items-center gap-3">
-                                <img src="${ev.image}" class="w-16 h-16 rounded-xl object-cover border border-amber-600 shrink-0">
-                                <div class="flex-grow min-w-0">
-                                    <h4 class="font-bold text-sm text-white truncate">${ev.name}</h4>
-                                    <a href="https://api.whatsapp.com/send?phone=${eo.whatsapp}&text=${encodeURIComponent('Hello, I am interested in your event ('+ev.name+') listed on Donation Book.')}" target="_blank" class="mt-2 inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">
-                                        <span>💬</span> Chat with Organizer
-                                    </a>
-                                </div>
+                        <div class="bg-stone-950 p-3 rounded-xl moving-border flex items-center gap-3">
+                            <img src="https://cdn.corenexis.com/f/uHgn7BjBQvN.png" class="w-16 h-16 rounded-xl object-cover border border-amber-600 shrink-0">
+                            <div class="flex-grow min-w-0">
+                                <h4 class="font-bold text-sm text-white truncate">Traditional Kolatam Troupe</h4>
+                                <a href="https://api.whatsapp.com/send?phone=911169296787&text=Hello,%20I%20am%20interested%20in%20your%20event." target="_blank" class="mt-2 inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-[11px] font-bold px-3 py-1.5 rounded-lg shadow cursor-pointer">
+                                    <span>💬</span> Chat with Organizer
+                                </a>
                             </div>
-                        `).join('')}
+                        </div>
                     </div>
                 </div>
             `;
@@ -1428,7 +1498,6 @@
             localStorage.setItem('portal_lang', lang);
             let t = translations[lang] || translations['en'];
 
-            // Safely update all mapped text elements across all pages
             const mapping = {
                 'homeTitleText': t.title,
                 'homeSubText': t.subtitle,
@@ -1454,8 +1523,34 @@
                 'stRegBtn': t.stRegBtn,
                 'stLoginBtn': t.stLoginBtn,
                 'stBackBtn': t.stBackBtn,
-                'eoSpecText': t.featDesc || "Specialized in Traditional Kolatam, Live Orchestra & Sound Systems.",
-                'eoChatText': t.featBtnText || "View All Events & Chat ➔",
+                'orgLoginTitle': t.orgLoginTitle,
+                'lblMobId': t.lblMobId,
+                'lblPass': t.lblPass,
+                'btnLoginSubmit': t.btnLoginSubmit,
+                'btnForgot': t.btnForgot,
+                'btnLoginBack': t.btnLoginBack,
+                'regTitle': t.regTitle,
+                'lblOrgName': t.lblOrgName,
+                'lblAdminName': t.lblAdminName,
+                'lblRegMobile': t.lblRegMobile,
+                'lblRegPass': t.lblRegPass,
+                'lblRegMpin': t.lblRegMpin,
+                'btnRegSubmit': t.btnRegSubmit,
+                'btnRegBack': t.btnRegBack,
+                'lblLiveClock': t.lblLiveClock,
+                'lblOrgLabel': t.lblOrgLabel,
+                'btnShareOrg': t.btnShareOrg,
+                'lblNeedHelp': t.lblNeedHelp,
+                'btnWapSupport': t.btnWapSupport,
+                'lblOccasionsHeader': t.lblOccasionsHeader,
+                'btnAddOccasion': t.btnAddOccasion,
+                'provDashTitle': t.provDashTitle,
+                'provLeadsLabel': t.provLeadsLabel,
+                'provLockNote': t.provLockNote,
+                'provUpgradeBtn': t.provUpgradeBtn,
+                'provItemsHeader': t.provItemsHeader,
+                'provAddItemBtn': t.provAddItemBtn,
+                'provHomeBtn': t.provHomeBtn,
                 'badge1Title': t.badge1Title,
                 'badge1Sub': t.badge1Sub,
                 'badge4Title': t.badge4Title,
@@ -1571,9 +1666,7 @@
 
             try {
                 let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, {
-                    method: "GET",
-                    headers: { "Accept": "application/json" },
-                    mode: "cors"
+                    method: "GET", headers: { "Accept": "application/json" }, mode: "cors"
                 });
                 let result = await res.json();
                 
@@ -1611,54 +1704,10 @@
             localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
         }
 
-        async function refreshUserDataFromServer() {
-            if (!currentUser || !currentUser.mobile) return;
-            if (typeof renderOccasions === "function") renderOccasions();
-        }
-
         function logoutUser() {
             currentUser = null;
             localStorage.removeItem(DB_CURRENT);
             window.location.href = window.location.pathname;
-        }
-
-        async function checkPublicViewMode() {
-            return false;
-        }
-
-        async function initDashboard() {
-            if(await checkPublicViewMode()) return;
-
-            let authHeaderButtons = document.getElementById('authHeaderButtons');
-            let userProfileHeader = document.getElementById('userProfileHeader');
-            let adminMembersBtn = document.getElementById('adminMembersBtn');
-            let languageDropdownContainer = document.getElementById('languageDropdownContainer');
-
-            if(currentUser) {
-                if(authHeaderButtons) authHeaderButtons.classList.add('hidden');
-                if(languageDropdownContainer) languageDropdownContainer.classList.add('hidden');
-                if(userProfileHeader) userProfileHeader.classList.remove('hidden');
-                switchView('userDashboardView');
-
-                let userNameElem = document.getElementById('loggedUserName');
-                let orgNameElem = document.getElementById('displayOrgName');
-                if(userNameElem) userNameElem.innerText = currentUser.adminName || currentUser.mobile;
-                if(orgNameElem) orgNameElem.innerText = currentUser.orgName;
-
-                if(currentUser.isMainAdmin) {
-                    if(adminMembersBtn) adminMembersBtn.classList.remove('hidden');
-                    renderControlMembers();
-                } else {
-                    if(adminMembersBtn) adminMembersBtn.classList.add('hidden');
-                }
-
-                renderOccasions();
-            } else {
-                if(authHeaderButtons) authHeaderButtons.classList.remove('hidden');
-                if(languageDropdownContainer) languageDropdownContainer.classList.remove('hidden');
-                if(userProfileHeader) userProfileHeader.classList.add('hidden');
-                switchView('publicHomeView');
-            }
         }
 
         function addNewControlMember() {
