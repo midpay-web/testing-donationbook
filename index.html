@@ -1289,12 +1289,13 @@
                     closeModal('eventProviderLoginModal');
                     renderProviderDashboard();
                     return;
+                } else {
+                    showCustomAlert("Login Failed", "Incorrect mobile number or password!");
                 }
             } catch(e) {
                 hideLoader();
+                showCustomAlert("Connection Error", "Could not connect to sheet server!");
             }
-
-            showCustomAlert("Login Failed", "Incorrect mobile number or password!");
         }
 
         // 👉 Login Store Provider from Google Sheet
@@ -1317,12 +1318,13 @@
                     closeModal('storeProviderLoginModal');
                     renderProviderDashboard();
                     return;
+                } else {
+                    showCustomAlert("Login Failed", "Incorrect mobile number or password!");
                 }
             } catch(e) {
                 hideLoader();
+                showCustomAlert("Connection Error", "Could not connect to sheet server!");
             }
-
-            showCustomAlert("Login Failed", "Incorrect mobile number or password!");
         }
 
         function logoutProvider() {
