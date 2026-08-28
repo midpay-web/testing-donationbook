@@ -21,7 +21,7 @@
         }
         .moving-border { border-width: 1.5px; border-style: solid; border-color: rgba(245, 158, 11, 0.3); animation: glowingBorder 4s infinite linear; }
         .glow-card { background: rgba(25, 20, 16, 0.90); backdrop-filter: blur(12px); }
-        
+
         /* Enhanced 3D Modal Effect */
         .modal-3d-effect {
             transform: perspective(1000px) rotateX(1deg);
@@ -44,7 +44,7 @@
             display: inline-block;
             animation: textFadeCycle 6s infinite;
         }
-        
+
         /* Hide scrollbar for clean horizontal categories scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
@@ -75,7 +75,7 @@
 
     <!-- Main Content Container -->
     <main class="w-full max-w-md px-4 py-4 space-y-4 flex-grow">
-        
+
         <!-- 1. Register Page View -->
         <div id="registerView" class="page-view space-y-4 py-1">
             <div class="text-center space-y-1">
@@ -275,7 +275,7 @@
                         <option value="Wants">ఇష్ట ఖర్చు (Wants)</option>
                     </select>
                 </div>
-                
+
                 <div id="incomeSourceBox" class="hidden space-y-1">
                     <label class="text-[10px] text-[#f59e0b] font-bold block">ఆదాయం ఎలా వచ్చింది? (Income Source):</label>
                     <input type="text" id="incomeSourceDesc" placeholder="ఆదాయం మూలం (Source)" class="w-full p-2 rounded-xl bg-stone-950 text-white border border-stone-800 text-xs">
@@ -459,7 +459,7 @@
         <div id="storeModuleView" class="page-view space-y-3 hidden">
             <div class="glow-card text-white p-4 rounded-2xl shadow-xl text-center moving-border border border-emerald-600/30 space-y-3">
                 <h2 class="title-font text-base font-black text-emerald-300">🛒 General E-Commerce Store</h2>
-                
+
                 <!-- Seller Wallet & Leads Summary (Visible ONLY to registered sellers) -->
                 <div id="sellerWalletPanel" class="hidden bg-stone-950 p-2.5 rounded-xl border border-stone-800 text-xs space-y-2">
                     <div class="flex justify-between items-center font-bold">
@@ -546,7 +546,7 @@
                 <input type="hidden" id="editingStoreProdId" value="">
                 <div><label class="font-bold block mb-1 text-[#f59e0b]">Product Name (ప్రొడక్ట్ పేరు):</label><input type="text" id="storeProdName" placeholder="ఉదా: Smart Watch" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
                 <div><label class="font-bold block mb-1 text-[#f59e0b]">Price in ₹ (ధర):</label><input type="number" id="storeProdPrice" placeholder="ఉదా: 999" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
-                
+
                 <!-- Category Select & Custom Category Input with 22 Built-in Categories -->
                 <div>
                     <label class="font-bold block mb-1 text-[#f59e0b]">Category (కేటగిరీ ఎంచుకోండి):</label>
@@ -614,11 +614,11 @@
                 <button onclick="closeModal('walletTopUpModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-3 overflow-y-auto flex-grow space-y-3 text-xs">
-                
+
                 <!-- Leads Plans Information -->
                 <div class="space-y-2">
                     <p class="text-[11px] text-stone-300 font-bold text-center">లీడ్స్ ప్లాన్‌లు (లీడ్స్ మాత్రమే యాడ్ అవుతాయి):</p>
-                    
+
                     <!-- 1. Basic Plan -->
                     <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
                         <div>
@@ -800,7 +800,7 @@
                 <button onclick="closeModal('accountsModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-3 overflow-y-auto flex-grow space-y-3 text-xs">
-                
+
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="openDonationsListModal()" class="bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">💰 విరాళాలు చూడండి</button>
                     <button onclick="openExpensesListModal()" class="bg-red-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">📊 ఖర్చులు చూడండి</button>
@@ -842,7 +842,7 @@
                 <div class="bg-stone-950 p-3 rounded-2xl border border-stone-800 space-y-2 shadow-xl">
                     <h4 class="font-bold text-[#f59e0b] text-xs">➕ కొత్త ఎంట్రీని జోడించండి</h4>
                     <input type="hidden" id="editingEntryId" value="">
-                    
+
                     <div class="grid grid-cols-2 gap-1.5">
                         <select id="entryType" onchange="toggleEntryTypeField(this.value)" class="p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
                             <option value="income">నగదు విరాళం (Cash Donation +)</option>
@@ -903,7 +903,7 @@
             </div>
         </div>
     </div>
-    
+
     <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-red-950 flex justify-between items-center border-b border-red-800">
@@ -919,7 +919,7 @@
 
     <!-- Master JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbwCKW8H3uM_R2xYMfEMS3aPr77fl1Q_sM6U_dTczvDCCc7mJs3WqBo3lef4QAGTueE/exec";
+        const _URL = "https://script.google.com/macros/s/AKfycbyxnmPwC3fgqgJjK8ApxBRVrBkYd2PFq-CzFxRa45nSkbgQS2ydHJ-xAyXyqaPAhlg/exec";
         const DB_CURRENT = 'youth_current_user';
         const HOME_EXP_KEY = 'omnihub_home_expenses_master_final_v14';
         const SUB_CHECK_KEY = 'home_expenses_reg_timestamp';
@@ -931,11 +931,35 @@
         let isSellerWaVerified = true;
         let currentComparePeriod = 1; // Default 1 Month
         let currentSelectedCategory = 'All'; // Selected store category filter
-        
+
         // --- Custom Date Filter Global Variables ---
         let customDateFilterActive = false;
         let customStartDate = null;
         let customEndDate = null;
+
+        // --- Google Sheet Sync Helper Function (Sub-member mapping support) ---
+        async function syncHomeDataToSheet(actionName, payloadData) {
+            if (!currentUser) return;
+            // సబ్-మెంబర్ అయితే వారి పేరెంట్ అడ్మిన్ నంబర్‌కు డేటా సింక్ అవుతుంది
+            let targetMobile = currentUser.parentMobile || currentUser.mobile;
+            if (!targetMobile) return;
+
+            let payload = {
+                action: actionName,
+                mobile: targetMobile,
+                ...payloadData
+            };
+            try {
+                await fetch(_URL, { 
+                    method: "POST", 
+                    body: JSON.stringify(payload), 
+                    headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+                    mode: "cors" 
+                });
+            } catch(e) {
+                console.error("Sheet Sync Error:", e);
+            }
+        }
 
         // --- Consistent Date Formatter (e.g., 27 Aug 2026) ---
         function formatDate(dateStr) {
@@ -1119,7 +1143,7 @@
             views.forEach(v => { v.style.display = 'none'; v.classList.add('hidden'); });
             let target = document.getElementById(viewId);
             if(target) { target.style.display = 'block'; target.classList.remove('hidden'); }
-            
+
             if(viewId === 'loginView' || viewId === 'registerView') {
                 document.getElementById('mainHeader').classList.remove('hidden');
                 document.getElementById('loggedNavMenu').classList.add('hidden');
@@ -1480,10 +1504,13 @@
             let itemName = input.value.trim();
             if(!itemName) { alert("దయచేసి సరుకు పేరు రాయండి!"); return; }
             if(!homeAppData.shoppingList) homeAppData.shoppingList = [];
-            homeAppData.shoppingList.push({ id: 'shop_' + Date.now(), name: itemName, checked: false });
+            let newShopItem = { id: 'shop_' + Date.now(), name: itemName, checked: false };
+            homeAppData.shoppingList.push(newShopItem);
             localStorage.setItem(HOME_EXP_KEY, JSON.stringify(homeAppData));
             input.value = '';
             renderShoppingListUI();
+            
+            syncHomeDataToSheet("saveHomeGoalShopping", { categoryType: 'shopping', record: newShopItem });
         }
 
         function renderShoppingListUI() {
@@ -1532,6 +1559,8 @@
             document.getElementById('goalAmount').value = '';
             renderFinancialGoalsUI();
             show3DSuccessModal("గోల్ సేవ్ అయింది!", "మీ భవిష్యత్ లక్ష్యం విజయవంతంగా జోడించబడింది.");
+            
+            syncHomeDataToSheet("saveHomeGoalShopping", { categoryType: 'goal', record: newGoal });
         }
 
         function renderFinancialGoalsUI() {
@@ -1610,6 +1639,8 @@
             renderHomeExpensesUI();
             populateDatalist();
             show3DSuccessModal("సేవ్ అయింది!", "లావాదేవీ రికార్డ్ చేయబడింది.");
+
+            syncHomeDataToSheet("saveHomeTx", { tx: newTx });
         }
 
         function calculateAndSaveLoan() {
@@ -1636,6 +1667,8 @@
             document.getElementById('loanRupeeRate').value = '';
             renderHomeExpensesUI();
             show3DSuccessModal("అప్పు చేర్చబడింది", "అప్పుల లెడ్జర్ అప్‌డేట్ చేయబడింది.");
+
+            syncHomeDataToSheet("saveHomeLoan", { loan: loanObj });
         }
 
         function removeLoan(id) {
@@ -1667,6 +1700,8 @@
             document.getElementById('emiDueDate').value = '';
             renderHomeExpensesUI();
             show3DSuccessModal("EMI సెటప్", "EMI షెడ్యూల్ మరియు వాట్సాప్ రిమైండర్ సిద్ధం చేయబడింది.");
+
+            syncHomeDataToSheet("saveHomeEmi", { emi: emiObj });
         }
 
         function sendEmiWhatsAppReminder(itemName, monthlyAmt, dueDate) {
@@ -1703,7 +1738,7 @@
                     let curM = today.getMonth();
                     let firstDayOfCurrentMonth = `${curY}-${String(curM + 1).padStart(2, '0')}-01`;
                     let startDate = firstTxDate < firstDayOfCurrentMonth ? firstTxDate : firstDayOfCurrentMonth;
-                    
+
                     filteredTx = allTx.filter(t => t.date >= startDate && t.date <= todayStr);
                     dateRangeText = `${formatDate(startDate)} నుండి ${formatDate(todayStr)} వరకు (Live)`;
                 } else {
@@ -1789,7 +1824,7 @@
         function downloadHomeExpensesPDFReport() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
-            
+
             let allTx = homeAppData.transactions || [];
             let filteredTx = [];
             let rangeLabel = "";
@@ -1830,7 +1865,7 @@
             doc.setFontSize(16);
             doc.setTextColor(245, 158, 11);
             doc.text("OMNIHUB FAMILY FINANCE REPORT", 105, 12, { align: "center" });
-            
+
             doc.setFontSize(10);
             doc.setTextColor(255, 255, 255);
             doc.text(`Tracking Period: ${rangeLabel}`, 105, 22, { align: "center" });
@@ -2007,7 +2042,7 @@
                 let pTx = homeAppData.transactions.filter(t => t.date.startsWith(pStr));
                 let mInc = pTx.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0);
                 let mExp = pTx.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0);
-                
+
                 if(i > 0) {
                     prevInc += mInc;
                     prevExp += mExp;
@@ -2220,7 +2255,7 @@
 
             showLoader();
             let newOrgObj = { orgName, adminName, email, mobile, pass, mpin, isMainAdmin: wantToSell, registrationDate: new Date().toLocaleString(), occasions: [], members: [] };
-            
+
             allLocalOrgs.push(newOrgObj);
             localStorage.setItem('all_registered_orgs_cache', JSON.stringify(allLocalOrgs));
 
@@ -2265,10 +2300,21 @@
                 let res = await fetch(`${_URL}?action=login&mobile=${mobile}&pass=${pass}`, { method: "GET", headers: { "Accept": "application/json" }, mode: "cors" });
                 let result = await res.json();
                 hideLoader();
-                
+
+                if (result.status === "success" && result.user) {
+                    currentUser = result.user;
+                    if (result.role === "member") {
+                        currentUser.isMainAdmin = false;
+                    } else {
+                        currentUser.isMainAdmin = true;
+                    }
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+
                 let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
-                
-                let mainOrgMatch = allLocalOrgs.find(o => o.mobile === mobile && o.pass === pass) || (result.status === "success" ? result.user : null);
+                let mainOrgMatch = allLocalOrgs.find(o => o.mobile === mobile && o.pass === pass);
                 if(mainOrgMatch) {
                     currentUser = mainOrgMatch;
                     currentUser.isMainAdmin = true;
@@ -2278,21 +2324,24 @@
                 }
 
                 let subMemberFoundOrg = null;
+                let matchedSubMember = null;
                 for(let org of allLocalOrgs) {
                     if(org.members) {
                         let mMatch = org.members.find(m => m.mobile === mobile && m.pass === pass);
                         if(mMatch) {
                             subMemberFoundOrg = org;
+                            matchedSubMember = mMatch;
                             break;
                         }
                     }
                 }
 
-                if(subMemberFoundOrg) {
+                if(subMemberFoundOrg && matchedSubMember) {
                     currentUser = {
                         orgName: subMemberFoundOrg.orgName + " (Sub-Member View)",
                         mobile: mobile,
-                        isMainAdmin: false, // RESTRICTED TO DONATION BOOK ONLY
+                        parentMobile: subMemberFoundOrg.mobile,
+                        isMainAdmin: false,
                         occasions: subMemberFoundOrg.occasions || []
                     };
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
@@ -2308,24 +2357,6 @@
                 if(mainOrgMatch) {
                     currentUser = mainOrgMatch;
                     currentUser.isMainAdmin = true;
-                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
-                    initDashboard();
-                    return;
-                }
-                let subMemberFoundOrg = null;
-                for(let org of allLocalOrgs) {
-                    if(org.members) {
-                        let mMatch = org.members.find(m => m.mobile === mobile && m.pass === pass);
-                        if(mMatch) { subMemberFoundOrg = org; break; }
-                    }
-                }
-                if(subMemberFoundOrg) {
-                    currentUser = {
-                        orgName: subMemberFoundOrg.orgName + " (Sub-Member View)",
-                        mobile: mobile,
-                        isMainAdmin: false,
-                        occasions: subMemberFoundOrg.occasions || []
-                    };
                     localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
                     initDashboard();
                     return;
@@ -2347,7 +2378,7 @@
             try {
                 let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
                 let mainAccount = allLocalOrgs.find(o => o.mobile === mobile && o.mpin === mpin);
-                
+
                 let subMemberAccounts = [];
                 for(let org of allLocalOrgs) {
                     if(org.members) {
@@ -2359,7 +2390,7 @@
                 }
 
                 hideLoader();
-                
+
                 let resultHTML = "";
                 if(mainAccount) {
                     resultHTML += `<p class="text-emerald-400 font-bold">🏛️ మెయిన్ అకౌంట్ పాస్‌వర్డ్: <b>${mainAccount.pass}</b></p>`;
@@ -2398,7 +2429,7 @@
                 document.getElementById('loggedNavMenu').classList.remove('hidden');
                 openDashboardModule();
                 document.getElementById('displayOrgName').innerText = currentUser.orgName;
-                
+
                 if(!currentUser.isMainAdmin) {
                     let homeExpBtn = document.getElementById('navBtnHomeExp');
                     let storeBtn = document.getElementById('navBtnStore');
@@ -2435,7 +2466,7 @@
 
             if(!name || !mobile || !pass) { showCustomAlert("తప్పనిసరి వివరాలు", "పేరు, నంబర్ మరియు పాస్‌వర్డ్ ఎంటర్ చేయండి!"); return; }
             if(!currentUser.members) currentUser.members = [];
-            
+
             let existingMem = currentUser.members.find(m => m.mobile === mobile);
             if(existingMem) {
                 showCustomAlert("ఇప్పటికే ఉన్నారు", "ఈ మొబైల్ నంబర్ ఇప్పటికే ఈ ఆర్గనైజేషన్‌లో సభ్యుడిగా ఉంది!");
@@ -2443,7 +2474,7 @@
             }
 
             currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
-            
+
             let cache = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
             let existingIdx = cache.findIndex(o => o.mobile === currentUser.mobile);
             if(existingIdx !== -1) cache[existingIdx] = currentUser;
@@ -2549,7 +2580,7 @@
             container.innerHTML = currentUser.occasions.map((occ, idx) => {
                 let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
                 let badge = idx === 0 ? '<span class="bg-emerald-950 text-emerald-300 text-[9px] px-2 py-0.5 rounded font-bold">ఉచిత అకేషన్</span>' : '<span class="bg-amber-950 text-amber-300 text-[9px] px-2 py-0.5 rounded font-bold">పెయిడ్ అకేషన్</span>';
-                
+
                 let actionBtn = `
                     <div class="flex gap-1.5 pt-1">
                         <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl cursor-pointer">📊 కంట్రోల్ ప్యానెల్</button>
@@ -2647,7 +2678,7 @@
             if(!occ) return;
             let donations = occ.entries.filter(e => e.type === 'income' || e.type === 'item_donation');
             let container = document.getElementById('modalDonationsContainer');
-            
+
             let upiTotal = 0;
             let cashTotal = 0;
             donations.forEach(d => {
@@ -2730,7 +2761,7 @@
                 let estVal = Number(document.getElementById('itemEstValue').value || 0);
 
                 if(!donor || !goods) { showCustomAlert("వివరాలు", "దాత పేరు మరియు వస్తువు వివరాలు రాయండి!"); return; }
-                
+
                 newEntry.type = 'item_donation';
                 newEntry.amount = 0; 
                 newEntry.estValue = estVal; 
@@ -2757,7 +2788,14 @@
                 show3DSuccessModal("సేవ్ అయింది!", "ఎంట్రీ జోడించబడింది.");
             }
 
-            if(currentUser.isMainAdmin) syncUserDataWithSheet();
+            if(currentUser.isMainAdmin) {
+                syncUserDataWithSheet();
+            } else {
+                // సబ్-మెంబర్ ఎంట్రీలు చేసినప్పుడు మెయిన్ అడ్మిన్ డేటాను అప్‌డేట్ చేయడానికి
+                let payload = { action: "update", mobile: currentUser.parentMobile, userData: currentUser };
+                fetch(_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }, mode: "cors" }).catch(e => console.error(e));
+            }
+
             resetEntryForm();
             openAccountsControl(selectedOccasionId);
             renderOccasions();
@@ -2768,7 +2806,7 @@
             if(!occ) return;
             let ent = occ.entries.find(e => e.id === entId);
             if(!ent) return;
-            
+
             document.getElementById('entryDate').value = ent.date;
             document.getElementById('editingEntryId').value = ent.id;
 
@@ -2778,7 +2816,7 @@
                 let descText = ent.desc || "";
                 let donorMatch = descText.match(/దాత:\s*([^)]+)/);
                 let goodsMatch = descText.match(/వస్తువుల విరాళం:\s*(.*?)\s*\(దాత/);
-                
+
                 document.getElementById('itemDonorName').value = donorMatch ? donorMatch[1] : "";
                 document.getElementById('itemGoodsDesc').value = goodsMatch ? goodsMatch[1] : descText;
                 document.getElementById('itemEstValue').value = ent.estValue || 0;
@@ -2852,7 +2890,12 @@
             let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
             if(occ && confirm("ఈ ఎంట్రీని తొలగించాలనుకుంటున్నారా?")) {
                 occ.entries = occ.entries.filter(e => e.id !== entId);
-                if(currentUser.isMainAdmin) syncUserDataWithSheet();
+                if(currentUser.isMainAdmin) {
+                    syncUserDataWithSheet();
+                } else {
+                    let payload = { action: "update", mobile: currentUser.parentMobile, userData: currentUser };
+                    fetch(_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }, mode: "cors" }).catch(e => console.error(e));
+                }
                 openAccountsControl(selectedOccasionId);
                 renderOccasions();
             }
@@ -2876,7 +2919,7 @@
                 if(mode.includes('Cash')) { cashTotal += Number(d.amount || 0); }
                 else { upiTotal += Number(d.amount || 0); }
             });
-            
+
             // Header
             doc.setFillColor(18, 15, 13);
             doc.rect(0, 0, 210, 28, 'F');
@@ -2888,11 +2931,11 @@
             doc.setFont("helvetica", "normal");
             doc.setTextColor(255, 255, 255);
             doc.text(`Occasion Accounts Report: ${occ.name}`, 105, 20, { align: "center" });
-            
+
             doc.setTextColor(60, 60, 60);
             doc.setFontSize(9);
             doc.text(`Generated on: ${formatDate(new Date().toISOString().split('T')[0])}`, 14, 35);
-            
+
             // Summary Table
             doc.autoTable({
                 startY: 40,
