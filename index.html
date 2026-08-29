@@ -104,8 +104,8 @@
                 </div>
 
                 <div class="glow-card p-3 rounded-2xl moving-border space-y-1 shadow-xl">
-                    <label class="text-[11px] text-[#f59e0b] font-bold block">Organization Name (సంస్థ పేరు)</label>
-                    <input type="text" id="regOrgName" placeholder="Enter organization name" class="w-full bg-transparent text-white outline-none placeholder-stone-600 text-xs">
+                    <label class="text-[11px] text-[#f59e0b] font-bold block">Organization Name (సంస్థ పేరు - Optional)</label>
+                    <input type="text" id="regOrgName" placeholder="Enter organization name (If any)" class="w-full bg-transparent text-white outline-none placeholder-stone-600 text-xs">
                 </div>
 
                 <div class="glow-card p-3 rounded-2xl moving-border space-y-1 shadow-xl">
@@ -201,7 +201,10 @@
         <div id="userDashboardView" class="page-view space-y-3 hidden">
             <div class="bg-gradient-to-r from-[#f59e0b] via-[#d97706] to-[#f59e0b] text-stone-950 p-3.5 rounded-2xl shadow-xl text-center moving-border">
                 <span class="text-[9px] font-black uppercase tracking-wider block opacity-90">Organization Name</span>
-                <h2 id="displayOrgName" class="title-font text-lg font-black truncate">--</h2>
+                <div class="flex items-center justify-center gap-2">
+                    <h2 id="displayOrgName" class="title-font text-lg font-black truncate">--</h2>
+                    <button onclick="openEditOrgModal()" class="text-stone-950 bg-stone-900/10 hover:bg-stone-900/20 px-1.5 py-0.5 rounded text-[10px] font-bold cursor-pointer" title="Edit Org Name">✏️ Edit</button>
+                </div>
                 <div class="flex justify-center gap-2 mt-2">
                     <button onclick="shareOrgLinkDirectly()" class="bg-stone-950 text-[#f59e0b] text-[10px] font-bold px-3 py-1 rounded-full shadow cursor-pointer">🔗 Share Org Link</button>
                     <button onclick="openModal('membersModal')" id="adminMembersBtn" class="bg-stone-950 text-[#f59e0b] text-[10px] font-bold px-3 py-1 rounded-full shadow cursor-pointer hidden">👥 Members</button>
@@ -222,7 +225,6 @@
                 <h2 class="title-font text-base font-black text-[#f59e0b]">Home Expenses & Budget Hub</h2>
             </div>
 
-            <!-- Dynamic Live Date Range Bar & PDF Download Button -->
             <div class="glow-card p-2.5 rounded-2xl moving-border shadow-xl flex items-center justify-between text-xs gap-2">
                 <div>
                     <span class="text-[9px] text-[#f59e0b] font-bold block">ట్రాకింగ్ కాలపరిమితి (Live Range):</span>
@@ -234,13 +236,11 @@
                 </div>
             </div>
 
-            <!-- Smart AI Budget Suggestions & Safe Zone Alerts -->
             <div class="glow-card p-3 rounded-2xl moving-border shadow-xl space-y-1 border-l-4 border-l-[#f59e0b]">
                 <h3 class="font-bold text-xs text-[#f59e0b] flex items-center gap-1"><span>🤖</span> <span>ఫ్యామిలీ సేఫ్ జోన్ & ఫోర్‌కాస్టింగ్ అలర్ట్స్</span></h3>
                 <p id="aiSuggestionText" class="text-[11px] text-stone-300 leading-relaxed">గత నెలల ట్రెండ్ విశ్లేషించబడుతోంది...</p>
             </div>
 
-            <!-- Financial Summary Cards -->
             <div class="grid grid-cols-3 gap-1.5 text-center text-xs">
                 <div class="bg-emerald-950 p-2 rounded-xl border border-emerald-900">
                     <span class="text-[9px] text-emerald-400 block">ఆదాయం (Income)</span>
@@ -256,7 +256,7 @@
                 </div>
             </div>
 
-            <!-- Add Daily Transaction Form (First Priority) -->
+            <!-- Add Daily Transaction Form -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-xs">
                 <h3 class="font-bold text-xs text-[#f59e0b]">➕ కొత్త ఎంట్రీని జోడించండి (Add Daily Transaction)</h3>
                 <div class="grid grid-cols-2 gap-1.5">
@@ -328,7 +328,7 @@
                 <button onclick="saveHomeTransaction()" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">ఎంట్రీ సేవ్ చేయండి & ప్రైస్ ట్రాక్ చేయండి (Save Transaction)</button>
             </div>
 
-            <!-- 2nd Priority: Debt & Interest Ledger with Clear Feature -->
+            <!-- Debt & Interest Ledger -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-xs">
                 <h3 class="font-bold text-xs text-[#f59e0b]">📊 అప్పులు & వడ్డీల లెడ్జర్ (Debt & Interest Ledger)</h3>
                 <div class="grid grid-cols-2 gap-1.5">
@@ -349,7 +349,7 @@
                 <div id="loanLedgerList" class="space-y-1 pt-1"></div>
             </div>
 
-            <!-- 3rd Priority: EMI Purchase Setup with EMI Date & WhatsApp Reminder -->
+            <!-- EMI Purchase Setup -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-xs">
                 <h3 class="font-bold text-xs text-[#f59e0b]">💳 EMI పర్చేస్ సెటప్ & వాట్సాప్ రిమైండర్ (EMI & WhatsApp Reminder)</h3>
                 <div class="grid grid-cols-2 gap-1.5">
@@ -368,44 +368,29 @@
                 <div id="emiTrackerList" class="space-y-1 pt-1"></div>
             </div>
 
-            <!-- 4th Priority: Income vs Expenses Visual Pie/Donut Chart Container -->
+            <!-- Income vs Expenses Visual Chart -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-center text-xs">
                 <div class="flex justify-between items-center border-b border-stone-800 pb-2">
                     <h3 class="font-bold text-xs text-[#f59e0b]">📊 ఆదాయం vs ఖర్చుల విజువల్ చార్ట్ (Visual Chart)</h3>
                     <button onclick="openMonthlyComparisonWindow()" class="bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black px-2.5 py-1 rounded-lg text-[11px] shadow cursor-pointer">📊 Monthly Comparison</button>
                 </div>
                 <div class="flex justify-center items-center py-2">
-                    <div id="incomeExpensePieChart" class="w-32 h-32 relative flex items-center justify-center">
-                        <!-- Rendered via JavaScript -->
-                    </div>
-                </div>
-                <div class="flex justify-center gap-4 text-[10px] text-stone-300">
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-emerald-500 rounded-full inline-block"></span> ఆదాయం (Income)</span>
-                    <span class="flex items-center gap-1"><span class="w-2.5 h-2.5 bg-red-500 rounded-full inline-block"></span> ఖర్చు (Expense)</span>
+                    <div id="incomeExpensePieChart" class="w-32 h-32 relative flex items-center justify-center"></div>
                 </div>
             </div>
 
-            <!-- 5th Priority: 50-30-20 Budget Rule Widget -->
+            <!-- 50-30-20 Budget Rule -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2 text-xs">
                 <h3 class="font-bold text-xs text-[#f59e0b]">🎯 50-30-20 బడ్జెట్ రూల్ (Budget Rule)</h3>
                 <p class="text-[10px] text-stone-400">మీ ఆదాయం ఆధారంగా ఆదర్శవంతమైన కేటాయింపు:</p>
                 <div class="grid grid-cols-3 gap-1.5 text-center pt-1">
-                    <div class="bg-blue-950 p-2 rounded-xl border border-blue-900">
-                        <span class="text-[9px] text-blue-300 block font-bold">Needs (తప్పనిసరి 50%)</span>
-                        <strong id="ruleNeedsAmt" class="text-white text-xs font-black">₹0</strong>
-                    </div>
-                    <div class="bg-purple-950 p-2 rounded-xl border border-purple-900">
-                        <span class="text-[9px] text-purple-300 block font-bold">Wants (ఇష్టాలు 30%)</span>
-                        <strong id="ruleWantsAmt" class="text-white text-xs font-black">₹0</strong>
-                    </div>
-                    <div class="bg-emerald-950 p-2 rounded-xl border border-emerald-900">
-                        <span class="text-[9px] text-emerald-300 block font-bold">Savings (పొదుపు 20%)</span>
-                        <strong id="ruleSavingsAmt" class="text-white text-xs font-black">₹0</strong>
-                    </div>
+                    <div class="bg-blue-950 p-2 rounded-xl border border-blue-900"><span class="text-[9px] text-blue-300 block font-bold">Needs (50%)</span><strong id="ruleNeedsAmt" class="text-white text-xs font-black">₹0</strong></div>
+                    <div class="bg-purple-950 p-2 rounded-xl border border-purple-900"><span class="text-[9px] text-purple-300 block font-bold">Wants (30%)</span><strong id="ruleWantsAmt" class="text-white text-xs font-black">₹0</strong></div>
+                    <div class="bg-emerald-950 p-2 rounded-xl border border-emerald-900"><span class="text-[9px] text-emerald-300 block font-bold">Savings (20%)</span><strong id="ruleSavingsAmt" class="text-white text-xs font-black">₹0</strong></div>
                 </div>
             </div>
 
-            <!-- 6th Priority: Future Goals & Investment Planner -->
+            <!-- Future Goals -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-3 text-xs">
                 <h3 class="font-bold text-xs text-[#f59e0b]">🚀 ఫ్యూచర్ గోల్స్ & ఇన్వెస్ట్‌మెంట్ ప్లానర్ (Future Goals & Investment)</h3>
                 <div class="space-y-2">
@@ -420,38 +405,30 @@
                     </div>
                     <button onclick="saveFinancialGoal()" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2 rounded-xl cursor-pointer">గోల్ సెట్ చేయి & ఇన్వెస్ట్‌మెంట్ సలహా పొందు (Set Goal)</button>
                 </div>
-                <div id="goalsListContainer" class="space-y-1.5 pt-1">
-                    <p class="text-stone-500 text-center text-[11px]">ఇప్పటివరకు ఎలాంటి గోల్స్ లేవు.</p>
-                </div>
+                <div id="goalsListContainer" class="space-y-1.5 pt-1"><p class="text-stone-500 text-center text-[11px]">ఇప్పటివరకు ఎలాంటి గోల్స్ లేవు.</p></div>
             </div>
 
-            <!-- 7th Priority: Shopping List (Grocery Checklist Feature) -->
+            <!-- Shopping List -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-xs">
                 <div class="flex justify-between items-center border-b border-stone-800 pb-1.5">
                     <h3 class="font-bold text-xs text-[#f59e0b]">🛒 షాపింగ్ లిస్ట్ (Shopping List - సరుకుల జాబితా)</h3>
-                    <span class="text-[9px] text-stone-400">అయిపోయిన సరుకులు నోట్ చేసుకోండి</span>
                 </div>
                 <div class="flex gap-1.5">
                     <input type="text" id="shopItemInput" placeholder="కొనవలసిన సరుకు పేరు (Item Name)" class="w-full p-2 rounded-xl bg-stone-950 text-white border border-stone-800 text-xs">
                     <button onclick="addShoppingItem()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl cursor-pointer shrink-0 text-xs">+ జోడించు (Add)</button>
                 </div>
-                <div id="shoppingListContainer" class="space-y-1 max-h-32 overflow-y-auto pr-1 pt-1">
-                    <p class="text-stone-500 text-center py-1 text-[11px]">షాపింగ్ లిస్ట్ ఖాళీగా ఉంది.</p>
-                </div>
+                <div id="shoppingListContainer" class="space-y-1 max-h-32 overflow-y-auto pr-1 pt-1"><p class="text-stone-500 text-center py-1 text-[11px]">షాపింగ్ లిస్ట్ ఖాళీగా ఉంది.</p></div>
             </div>
 
-            <!-- Transactions History & Price Hike Alerts -->
             <div class="space-y-1.5">
                 <h4 class="font-bold text-xs text-[#f59e0b]">📋 లావాదేవీలు & ప్రైస్ హైక్ హెచ్చరికలు (Transactions & Price Hike)</h4>
-                <div id="homeTransactionsList" class="space-y-1 max-h-40 overflow-y-auto pr-1 text-xs">
-                    <p class="text-stone-500 text-center py-2">ఇప్పటివరకు ఎంట్రీలు లేవు.</p>
-                </div>
+                <div id="homeTransactionsList" class="space-y-1 max-h-40 overflow-y-auto pr-1 text-xs"><p class="text-stone-500 text-center py-2">ఇప్పటివరకు ఎంట్రీలు లేవు.</p></div>
             </div>
         </div>
 
     </main>
 
-    <!-- Floating WhatsApp Support Button (Always Visible After Login) -->
+    <!-- Floating WhatsApp Support Button -->
     <div id="floatingWhatsAppBtn" class="fixed bottom-20 right-4 z-50 hidden">
         <button onclick="openWhatsAppSupport()" class="whatsapp-float">
             <svg class="w-6 h-6 fill-current text-white" viewBox="0 0 24 24">
@@ -461,22 +438,29 @@
         </button>
     </div>
 
+    <!-- Edit Org Name Modal -->
+    <div id="editOrgModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+        <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
+            <div class="flex justify-between items-center border-b border-stone-800 pb-2">
+                <h3 class="font-black text-sm text-[#f59e0b]">✏️ సంస్థ పేరును మార్చండి (Edit Org Name)</h3>
+                <button onclick="closeModal('editOrgModal')" class="text-lg font-bold cursor-pointer">&times;</button>
+            </div>
+            <div class="space-y-3 text-xs">
+                <div>
+                    <label class="font-bold block mb-1 text-stone-300">కొత్త సంస్థ పేరు (Organization Name):</label>
+                    <input type="text" id="editOrgNameInput" placeholder=" సంస్థ పేరు ఎంటర్ చేయండి" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800">
+                </div>
+                <button onclick="saveOrgNameUpdate()" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">సేవ్ చేయి (Save)</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Monthly Comparison Separate Window View -->
     <div id="monthlyComparisonWindow" class="page-view space-y-4 hidden">
         <div class="glow-card text-white p-3 rounded-2xl shadow-xl flex justify-between items-center moving-border border border-[#f59e0b]/30">
             <h2 class="title-font text-base font-black text-[#f59e0b]">📊 Monthly Financial Comparison</h2>
             <button onclick="closeMonthlyComparisonWindow()" class="bg-stone-800 text-white font-bold px-3 py-1 rounded-xl text-xs cursor-pointer">← Back</button>
         </div>
-
-        <!-- Compare Period Selector Tabs (1M, 2M, 3M, 4M, 6M) -->
-        <div class="glow-card p-2 rounded-2xl moving-border flex justify-around text-[10px] font-bold shadow-xl">
-            <button onclick="setComparePeriod(1)" id="periodBtn1" class="px-2.5 py-1.5 rounded bg-[#f59e0b] text-stone-950">1 Month</button>
-            <button onclick="setComparePeriod(2)" id="periodBtn2" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">2 Months</button>
-            <button onclick="setComparePeriod(3)" id="periodBtn3" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">3 Months</button>
-            <button onclick="setComparePeriod(4)" id="periodBtn4" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">4 Months</button>
-            <button onclick="setComparePeriod(6)" id="periodBtn6" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">6 Months</button>
-        </div>
-
         <div id="monthlyComparisonWindowBody" class="space-y-3 pb-10"></div>
     </div>
 
@@ -484,21 +468,15 @@
     <div id="customDateFilterModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
             <div class="flex justify-between items-center border-b border-stone-800 pb-2">
-                <h3 class="font-black text-sm text-[#f59e0b]">📅 కస్టమ్ తేదీల ఫిల్టర్ (Custom Date Range)</h3>
+                <h3 class="font-black text-sm text-[#f59e0b]">📅 కస్టమ్ తేదీల ఫిల్టర్</h3>
                 <button onclick="closeModal('customDateFilterModal')" class="text-lg font-bold cursor-pointer">&times;</button>
             </div>
             <div class="space-y-3 text-xs">
-                <div>
-                    <label class="font-bold block mb-1 text-stone-300">ప్రారంభ తేదీ (From Date):</label>
-                    <input type="date" id="customFromDate" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800">
-                </div>
-                <div>
-                    <label class="font-bold block mb-1 text-stone-300">ముగింపు తేదీ (To Date):</label>
-                    <input type="date" id="customToDate" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800">
-                </div>
+                <div><label class="font-bold block mb-1 text-stone-300">ప్రారంభ తేదీ:</label><input type="date" id="customFromDate" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">ముగింపు తేదీ:</label><input type="date" id="customToDate" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
                 <div class="flex gap-2 pt-1">
                     <button onclick="applyCustomDateFilter()" class="flex-1 bg-emerald-600 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer">ఫిల్టర్ వర్తింపజేయి</button>
-                    <button onclick="resetCustomDateFilter()" class="bg-stone-800 text-stone-300 font-bold py-2.5 px-3 rounded-xl shadow cursor-pointer">రీసెట్ (Live)</button>
+                    <button onclick="resetCustomDateFilter()" class="bg-stone-800 text-stone-300 font-bold py-2.5 px-3 rounded-xl shadow cursor-pointer">రీసెట్</button>
                 </div>
             </div>
         </div>
@@ -507,7 +485,7 @@
     <!-- Global Loader -->
     <div id="globalLoader" class="fixed inset-0 bg-black/80 z-[99999] hidden flex flex-col items-center justify-center space-y-3">
         <div class="w-10 h-10 border-4 border-[#f59e0b] border-t-transparent rounded-full spinner"></div>
-        <p id="loaderText" class="text-white font-bold text-xs tracking-wider">దయచేసి వేచి ఉండండి...</p>
+        <p class="text-white font-bold text-xs tracking-wider">దయచేసి వేచి ఉండండి...</p>
     </div>
 
     <!-- 3D Success Popup Modal -->
@@ -516,7 +494,7 @@
             <div class="text-5xl animate-bounce">🎉</div>
             <h3 id="successModalTitle" class="font-black text-xl text-[#f59e0b]">విజయం!</h3>
             <p id="successModalDesc" class="text-xs text-stone-300 leading-relaxed">పని విజయవంతంగా పూర్తయింది.</p>
-            <button onclick="closeModal('success3DModal')" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer transition-all">కొనసాగించండి</button>
+            <button onclick="closeModal('success3DModal')" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">కొనసాగించండి</button>
         </div>
     </div>
 
@@ -526,22 +504,7 @@
             <div id="alertIcon" class="text-3xl">⚠️</div>
             <h3 id="alertTitle" class="font-bold text-base text-[#f59e0b]">గమనిక</h3>
             <p id="alertMessage" class="text-xs text-stone-300 leading-relaxed"></p>
-            <button onclick="closeModal('customAlertModal')" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer transition-all">సరే</button>
-        </div>
-    </div>
-
-    <!-- Backend-Driven 3-Month Subscription Trigger Modal -->
-    <div id="subscriptionModal" class="fixed inset-0 bg-black/90 hidden z-[99999] flex items-center justify-center p-4">
-        <div class="glow-card text-white rounded-2xl w-full max-w-sm p-6 text-center space-y-4 moving-border shadow-2xl modal-3d-effect">
-            <div class="text-4xl">⏳</div>
-            <h3 class="font-black text-lg text-[#f59e0b]">ఉచిత ట్రయల్ గడువు ముగిసింది (3 నెలలు పూర్తి)</h3>
-            <p class="text-xs text-stone-300 leading-relaxed">
-                మీ ఇంటి ఖర్చుల మేనేజ్‌మెంట్ 3 నెలల ఉచిత గడువు ముగిసింది. సేవలను నిరంతరం కొనసాగించడానికి ప్లాన్ ఎంచుకోండి.
-            </p>
-            <div class="space-y-2 pt-2">
-                <button onclick="selectSubscriptionPlan('monthly')" class="w-full bg-[#f59e0b] text-stone-950 font-bold py-2.5 rounded-xl shadow cursor-pointer text-xs">Choose Monthly Plan (₹100 / mo)</button>
-                <button onclick="selectSubscriptionPlan('yearly')" class="w-full bg-stone-900 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer text-xs">Choose Yearly Plan (₹365 / yr)</button>
-            </div>
+            <button onclick="closeModal('customAlertModal')" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">సరే</button>
         </div>
     </div>
 
@@ -549,20 +512,14 @@
     <div id="forgotModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
             <div class="flex justify-between items-center border-b border-stone-800 pb-2">
-                <h3 class="font-black text-sm text-[#f59e0b]">🔑 M-PIN ద్వారా పాస్‌వర్డ్ రికవరీ</h3>
+                <h3 class="font-black text-sm text-[#f59e0b]">🔑 M-PIN రికవరీ</h3>
                 <button onclick="closeModal('forgotModal')" class="text-lg font-bold cursor-pointer">&times;</button>
             </div>
             <div class="space-y-2.5 text-xs">
-                <div>
-                    <label class="font-bold block mb-1 text-stone-300">రిజిస్టర్డ్ మొబైల్ నంబర్:</label>
-                    <input type="tel" id="forgotMobile" placeholder="మొబైల్ నంబర్" maxlength="10" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800">
-                </div>
-                <div>
-                    <label class="font-bold block mb-1 text-stone-300">4-అంకెల M-PIN:</label>
-                    <input type="password" id="forgotMpin" placeholder="M-PIN" maxlength="4" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800 tracking-widest font-bold">
-                </div>
+                <div><label class="font-bold block mb-1 text-stone-300">మొబైల్ నంబర్:</label><input type="tel" id="forgotMobile" maxlength="10" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
+                <div><label class="font-bold block mb-1 text-stone-300">4-అంకెల M-PIN:</label><input type="password" id="forgotMpin" maxlength="4" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800 font-bold"></div>
                 <button onclick="recoverPasswordWithMpin()" class="w-full bg-purple-600 text-white font-bold py-2.5 rounded-xl shadow cursor-pointer">పాస్‌వర్డ్ పొందండి</button>
-                <p id="recoveredPasswordDisplay" class="text-center font-bold text-sm text-emerald-400 pt-2 space-y-1"></p>
+                <p id="recoveredPasswordDisplay" class="text-center font-bold text-sm text-emerald-400 pt-2"></p>
             </div>
         </div>
     </div>
@@ -578,15 +535,12 @@
                 <div class="bg-stone-950 p-3 rounded-2xl border border-stone-800 space-y-2 shadow-xl">
                     <h4 class="font-bold text-[#f59e0b]">➕ కొత్త సభ్యుడిని చేర్చండి</h4>
                     <input type="text" id="memberName" placeholder="సభ్యుడి పేరు" class="w-full p-2 rounded-xl border border-stone-800 bg-stone-900 text-white">
-                    <input type="text" id="memberDesignation" placeholder="హోదా (ఉదా: అధ్యక్షుడు)" class="w-full p-2 rounded-xl border border-stone-800 bg-stone-900 text-white">
+                    <input type="text" id="memberDesignation" placeholder="హోదా" class="w-full p-2 rounded-xl border border-stone-800 bg-stone-900 text-white">
                     <input type="tel" id="memberMobile" placeholder="మొబైల్ నంబర్" maxlength="10" class="w-full p-2 rounded-xl border border-stone-800 bg-stone-900 text-white">
                     <input type="password" id="memberPassword" placeholder="పాస్‌వర్డ్" class="w-full p-2 rounded-xl border border-stone-800 bg-stone-900 text-white">
                     <button onclick="addNewControlMember()" class="w-full bg-emerald-600 text-white font-bold py-2 rounded-xl shadow cursor-pointer">యాక్సెస్ ఇవ్వండి</button>
                 </div>
-                <div class="space-y-2">
-                    <h4 class="font-bold text-stone-300">📋 సభ్యుల జాబితా</h4>
-                    <div id="controlMembersList" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
-                </div>
+                <div id="controlMembersList" class="space-y-2 max-h-40 overflow-y-auto pr-1"></div>
             </div>
         </div>
     </div>
@@ -599,29 +553,9 @@
                 <button onclick="closeModal('addOccasionModal')" class="text-lg font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-4 space-y-3 text-xs">
-                <div class="bg-amber-950 border border-amber-500/40 text-amber-200 p-2.5 rounded-xl leading-relaxed">
-                    ⚠️ <strong>గమనిక:</strong> మొదటి అకేషన్ ఉచితం. అదనపు అకేషన్లకు ₹49 చెల్లించాలి!
-                </div>
                 <div><label class="font-bold block mb-1 text-[#f59e0b]">అకేషన్ పేరు:</label><input type="text" id="occName" placeholder="ఉదా: వినాయక చవితి 2026" class="w-full p-2.5 rounded-xl bg-stone-950 text-white border border-stone-800"></div>
-                <button onclick="createFreeOccasion()" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2.5 rounded-xl cursor-pointer">అకేషన్ సృష్టించండి</button>
+                <button onclick="createFreeOccasion()" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2.5 rounded-xl cursor-pointer">అకేషన్ సృష్టించండి</button>
             </div>
-        </div>
-    </div>
-
-    <!-- Pay ₹49 Fee UPI Verification Modal -->
-    <div id="pay49Modal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
-        <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border modal-3d-effect">
-            <h3 class="font-black text-lg text-[#f59e0b]">💳 ₹49 యాక్టివేషన్ ఫీజు చెల్లించండి</h3>
-            <p class="text-xs text-stone-300">QR స్కాన్ చేసి ₹49 చెల్లించండి <span id="pay49OccName" class="text-[#f59e0b] font-bold">--</span> (nageshyadav4u@oksbi):</p>
-            <div class="bg-white p-3 rounded-xl inline-block shadow-inner border border-stone-800">
-                <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-44 h-44 mx-auto object-contain">
-            </div>
-            <div class="space-y-2 text-left">
-                <label class="text-[11px] font-bold text-[#f59e0b] block">UPI ట్రాన్సాక్షన్ ఐడీ ఎంటర్ చేయండి:</label>
-                <input type="text" id="upiTransactionId" placeholder="ఉదా: 123456789012" class="w-full p-2 rounded-xl bg-stone-950 text-white border border-stone-800 text-xs font-mono">
-            </div>
-            <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-xl shadow cursor-pointer">ట్రాన్సాక్షన్ ఐడీ సమర్పించండి</button>
-            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">రద్దు చేయి</button>
         </div>
     </div>
 
@@ -636,59 +570,27 @@
                 <button onclick="closeModal('accountsModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-3 overflow-y-auto flex-grow space-y-3 text-xs">
-
                 <div class="grid grid-cols-2 gap-2">
                     <button onclick="openDonationsListModal()" class="bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">💰 విరాళాలు చూడండి</button>
                     <button onclick="openExpensesListModal()" class="bg-red-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">📊 ఖర్చులు చూడండి</button>
                 </div>
-
-                <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
-                    <h4 class="font-bold text-[#f59e0b] border-b border-stone-800 pb-1 flex justify-between items-center text-xs">
-                        <span>📊 డైనమిక్ కాస్ట్ ఎస్టిమేషన్</span>
-                        <button onclick="toggleEditEstimation()" class="text-[10px] bg-[#f59e0b] text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">మార్చు / జోడించు</button>
-                    </h4>
-                    <div id="estViewMode" class="space-y-1 text-stone-300">
-                        <div id="estimationItemsList" class="space-y-1 max-h-24 overflow-y-auto pr-1">
-                            <p class="text-stone-500 text-center py-1">ఎటిమేషన్స్ లేవు</p>
-                        </div>
-                        <div class="border-t border-stone-800 pt-1 space-y-0.5 font-bold">
-                            <div class="flex justify-between"><span class="text-stone-400">మొత్తం అంచనా ఖర్చు:</span><span id="estCostDisplay" class="text-[#f59e0b]">₹0</span></div>
-                            <div class="flex justify-between"><span class="text-stone-400">మొత్తం వసూలు:</span><span id="estCollectedDisplay" class="text-emerald-400">₹0</span></div>
-                            <div class="flex justify-between border-t border-stone-800 pt-1"><span class="text-amber-300">లోటు (Deficit):</span><span id="estGapDisplay" class="text-amber-400">₹0</span></div>
-                        </div>
-                    </div>
-                    <div id="estEditMode" class="hidden space-y-2 pt-1">
-                        <div id="dynamicEstimationInputs" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
-                        <button onclick="addEstimationRow('', '')" class="w-full bg-stone-900 text-[#f59e0b] font-bold py-1 rounded text-[11px] border border-stone-800 cursor-pointer">+ అంశం జోడించు</button>
-                        <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 text-white font-bold py-1.5 rounded shadow cursor-pointer mt-1">సేవ్ చేయి</button>
-                    </div>
-                </div>
-
                 <div class="grid grid-cols-3 gap-1.5 text-center">
                     <div class="bg-emerald-950 p-2.5 rounded-xl border border-emerald-900"><span class="text-[9px] text-emerald-400 block">విరాళం</span><span id="accTotInc" class="font-black text-xs text-white">₹0</span></div>
                     <div class="bg-red-950 p-2.5 rounded-xl border border-red-900"><span class="text-[9px] text-red-400 block">ఖర్చు</span><span id="accTotExp" class="font-black text-xs text-white">₹0</span></div>
-                    <div class="bg-amber-950 p-2.5 rounded-xl border border-amber-900"><span class="text-[9px] font-bold block text-amber-300">నిల్వ (Balance)</span><span id="accBal" class="font-black text-xs text-white">₹0</span></div>
+                    <div class="bg-amber-950 p-2.5 rounded-xl border border-amber-900"><span class="text-[9px] font-bold block text-amber-300">నిల్వ</span><span id="accBal" class="font-black text-xs text-white">₹0</span></div>
                 </div>
-
-                <button onclick="downloadOccasionReportPDF()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-2xl shadow cursor-pointer flex items-center justify-center gap-1.5 text-xs">
-                    <span>📥</span> <span>అకౌంట్స్ రిపోర్ట్ డౌన్‌లోడ్ (PDF)</span>
-                </button>
-
-                <!-- ADD NEW ENTRY (Supports Cash, UPI, Item Donation & Expense) -->
+                <button onclick="downloadOccasionReportPDF()" class="w-full bg-blue-600 text-white font-bold py-2.5 rounded-2xl shadow cursor-pointer">📥 అకౌంట్స్ రిపోర్ట్ డౌన్‌లోడ్ (PDF)</button>
                 <div class="bg-stone-950 p-3 rounded-2xl border border-stone-800 space-y-2 shadow-xl">
                     <h4 class="font-bold text-[#f59e0b] text-xs">➕ కొత్త ఎంట్రీని జోడించండి</h4>
                     <input type="hidden" id="editingEntryId" value="">
-
                     <div class="grid grid-cols-2 gap-1.5">
                         <select id="entryType" onchange="toggleEntryTypeField(this.value)" class="p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
-                            <option value="income">నగదు విరాళం (Cash Donation +)</option>
-                            <option value="item_donation">వస్తువుల విరాళం (Item/Goods)</option>
-                            <option value="expense">ఖర్చు (Expense -)</option>
+                            <option value="income">నగదు విరాళం (+)</option>
+                            <option value="item_donation">వస్తువుల విరాళం</option>
+                            <option value="expense">ఖర్చు (-)</option>
                         </select>
                         <input type="date" id="entryDate" class="p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
                     </div>
-
-                    <!-- Amount & Description & Payment Mode (Cash / UPI) -->
                     <div id="entryAmountBox" class="space-y-1.5">
                         <div class="grid grid-cols-2 gap-1.5">
                             <input type="number" id="entryAmount" placeholder="మొత్తం (₹)" class="p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
@@ -696,27 +598,17 @@
                         </div>
                         <select id="entryPaymentMode" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
                             <option value="Cash">Cash (నగదు)</option>
-                            <option value="UPI">UPI / Online (ఆన్‌లైన్)</option>
+                            <option value="UPI">UPI / Online</option>
                         </select>
                     </div>
-
-                    <!-- Item Donation Specific Fields -->
                     <div id="entryItemBox" class="hidden space-y-1.5">
-                        <input type="text" id="itemDonorName" placeholder="దాత పేరు (Donor Name)" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
-                        <input type="text" id="itemGoodsDesc" placeholder="వస్తువుల వివరాలు (ఉదా: 5 బస్తాల బియ్యం)" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
-                        <input type="number" id="itemEstValue" placeholder="అంచనా విలువ (రఫర్ నంబర్ మాత్రమే - అకౌంట్లో కలవదు)" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
+                        <input type="text" id="itemDonorName" placeholder="దాత పేరు" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
+                        <input type="text" id="itemGoodsDesc" placeholder="వస్తువుల వివరాలు" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
+                        <input type="number" id="itemEstValue" placeholder="అంచనా విలువ (₹)" class="w-full p-2 rounded-xl bg-stone-900 text-white text-xs border border-stone-800">
                     </div>
-
-                    <div class="flex gap-1.5 pt-1">
-                        <button onclick="saveFinancialEntry()" id="btnSaveEntry" class="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer text-xs">ఎంట్రీ సేవ్ చేయి</button>
-                        <button onclick="resetEntryForm()" id="btnCancelEdit" class="hidden bg-stone-800 text-stone-300 font-bold py-2 px-2.5 rounded-xl shadow cursor-pointer text-xs">రద్దు</button>
-                    </div>
+                    <button onclick="saveFinancialEntry()" id="btnSaveEntry" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer text-xs">ఎంట్రీ సేవ్ చేయి</button>
                 </div>
-
-                <div class="space-y-1.5">
-                    <h4 class="font-bold text-[#f59e0b] text-xs">📋 లావాదేవీల జాబితా (ఎడిట్/డిలీట్ సపోర్ట్)</h4>
-                    <div id="financialEntriesList" class="space-y-1 max-h-36 overflow-y-auto pr-1"></div>
-                </div>
+                <div id="financialEntriesList" class="space-y-1 max-h-36 overflow-y-auto pr-1"></div>
             </div>
         </div>
     </div>
@@ -725,37 +617,30 @@
     <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
-                <h3 class="font-bold text-sm text-emerald-300">💰 అన్ని విరాళాలు (సొమ్ములు & వస్తువులు)</h3>
+                <h3 class="font-bold text-sm text-emerald-300">💰 అన్ని విరాళాలు</h3>
                 <button onclick="closeModal('donationsListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
-            <!-- UPI vs Cash Summary Header -->
             <div id="donationsSummaryBar" class="p-2.5 bg-stone-900 border-b border-stone-800 flex justify-around text-[11px] font-bold">
                 <span class="text-emerald-400">UPI/Online: ₹0</span>
                 <span class="text-amber-400">Cash: ₹0</span>
             </div>
             <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalDonationsContainer"></div>
-            <div class="p-3 border-t border-stone-800">
-                <button onclick="closeModal('donationsListModal')" class="w-full bg-stone-800 py-2 rounded-lg font-bold text-xs">మూసివేయి</button>
-            </div>
         </div>
     </div>
 
     <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-red-950 flex justify-between items-center border-b border-red-800">
-                <h3 class="font-bold text-sm text-red-300">📊 అన్ని ఖర్చులు (Expenses List)</h3>
+                <h3 class="font-bold text-sm text-red-300">📊 అన్ని ఖర్చులు</h3>
                 <button onclick="closeModal('expensesListModal')" class="text-xl font-bold cursor-pointer">&times;</button>
             </div>
             <div class="p-3 overflow-y-auto flex-grow space-y-2 text-xs" id="modalExpensesContainer"></div>
-            <div class="p-3 border-t border-stone-800">
-                <button onclick="closeModal('expensesListModal')" class="w-full bg-stone-800 py-2 rounded-lg font-bold text-xs">మూసివేయి</button>
-            </div>
         </div>
     </div>
 
     <!-- Master JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbyqsnm2krI7LFFONVnYVdUz1OiuhGIB_27EUf-S9IeljtxRRUMR0hoFGqMgRJTMKNU/exec";
+        const _URL = "https://script.google.com/macros/s/AKfycbzL_u9pZMJ1rnCdm2MwMSTo9OtK0yfaMV8YrOohHn_RpbEwrUsVAj-2pZumYHb7WTQ/exec";
         const DB_CURRENT = 'youth_current_user';
         const HOME_EXP_KEY = 'omnihub_home_expenses_master_final_v14';
         const SUB_CHECK_KEY = 'home_expenses_reg_timestamp';
@@ -767,12 +652,10 @@
         let isSellerWaVerified = true;
         let currentComparePeriod = 1;
 
-        // --- Custom Date Filter Global Variables ---
         let customDateFilterActive = false;
         let customStartDate = null;
         let customEndDate = null;
 
-        // --- Google Sheet Sync Helper Function ---
         async function syncHomeDataToSheet(actionName, payloadData) {
             if (!currentUser) return;
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
@@ -797,7 +680,6 @@
             } catch(e) { console.error("Sheet Sync Error:", e); }
         }
 
-        // --- Fetch Home Data from Google Sheet Function ---
         async function fetchHomeDataFromSheet() {
             if (!currentUser || !currentUser.mobile) return;
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
@@ -816,7 +698,6 @@
             } catch(e) { console.error("Error fetching home data:", e); }
         }
 
-        // --- Consistent Date Formatter ---
         function formatDate(dateStr) {
             if (!dateStr) return '';
             let d = new Date(dateStr);
@@ -844,35 +725,6 @@
             document.getElementById('successModalTitle').innerText = title;
             document.getElementById('successModalDesc').innerText = desc;
             openModal('success3DModal');
-        }
-
-        function handleMobileInput(val) {}
-
-        function sendWhatsAppOtp() {
-            let mobile = document.getElementById('regMobile').value.trim();
-            if(mobile.length !== 10 || isNaN(mobile)) {
-                showCustomAlert("తప్పు నంబర్", "దయచేసి సరైన 10-అంకెల మొబైల్ నంబర్ ఎంటర్ చేయండి!");
-                return;
-            }
-            showLoader("WhatsApp OTP పంపబడుతోంది...");
-            setTimeout(() => {
-                hideLoader();
-                document.getElementById('otpBoxContainer').classList.remove('hidden');
-                show3DSuccessModal("OTP పంపబడింది!", "మీ WhatsApp నంబర్‌కు OTP పంపబడింది.");
-            }, 800);
-        }
-
-        function verifyWhatsAppOtp() {
-            let otp = document.getElementById('regOtpInput').value.trim();
-            if(otp.length !== 4) {
-                showCustomAlert("తప్పు OTP", "దయచేసి 4-అంకెల OTP ఎంటర్ చేయండి.");
-                return;
-            }
-            isPhoneVerified = true;
-            document.getElementById('otpStatusText').innerText = "Status: Verified via WhatsApp ✅";
-            document.getElementById('otpStatusText').className = "text-[10px] text-emerald-400 font-bold block";
-            document.getElementById('otpBoxContainer').classList.add('hidden');
-            show3DSuccessModal("Verified!", "మొబైల్ నంబర్ విజయవంతంగా వెరిఫై చేయబడింది.");
         }
 
         function toggleSellerFields(checkbox) {
@@ -969,7 +821,6 @@
             populateDatalist();
         }
 
-        // --- SHOPPING PORTION: AVAILABLE SOON ALERT ---
         function openStoreModule() { 
             updateActiveNav('navBtnStore');
             showCustomAlert("Coming Soon", "🛒 Shopping Service Available Soon! Stay tuned for exciting updates.", "🚀");
@@ -1538,7 +1389,27 @@
             }
         }
 
-        // --- Register Organization with Seller Details Sync Support ---
+        // --- Edit Org Name functions ---
+        function openEditOrgModal() {
+            document.getElementById('editOrgNameInput').value = currentUser.orgName || '';
+            openModal('editOrgModal');
+        }
+
+        async function saveOrgNameUpdate() {
+            let newName = document.getElementById('editOrgNameInput').value.trim();
+            if(!newName) {
+                showCustomAlert("తప్పిదం", "దయచేసి సంస్థ పేరు ఎంటర్ చేయండి!");
+                return;
+            }
+            currentUser.orgName = newName;
+            localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+            document.getElementById('displayOrgName').innerText = newName;
+            closeModal('editOrgModal');
+            show3DSuccessModal("అప్‌డేట్ అయింది!", "సంస్థ పేరు విజయవంతంగా సవరించబడింది.");
+            syncUserDataWithSheet();
+        }
+
+        // --- Register Organization with Optional Org Name Support ---
         async function registerOrganization() {
             let orgName = document.getElementById('regOrgName').value.trim();
             let adminName = document.getElementById('regAdminName').value.trim();
@@ -1548,9 +1419,14 @@
             let mpin = document.getElementById('regMpin').value.trim();
             let wantToSell = document.getElementById('wantToSellCheck').checked;
 
-            if(!orgName || !adminName || !mobile || !pass || !mpin) {
-                showCustomAlert("తప్పనిసరి వివరాలు", "దయచేసి అన్ని వివరాలు నింపండి!");
+            if(!adminName || !mobile || !pass || !mpin) {
+                showCustomAlert("తప్పనిసరి వివరాలు", "దయచేసి పేరు, మొబైల్ నంబర్, పాస్‌వర్డ్ మరియు M-PIN నింపండి!");
                 return;
+            }
+
+            // Optional Org Name check
+            if(!orgName) {
+                orgName = adminName + "'s Hub";
             }
 
             let shopName = wantToSell ? document.getElementById('regShopName').value.trim() : "";
@@ -1560,7 +1436,7 @@
             let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
             let existingMainUser = allLocalOrgs.find(o => o.mobile === mobile);
             if(existingMainUser) {
-                showCustomAlert("రిజిస్ట్రేషన్ నిరాకరించబడింది", "ఈ మొబైల్ నంబర్‌తో ఇప్పటికే మెయిన్ యూజర్ అకౌంట్ రిజిస్టర్ చేయబడి ఉంది!");
+                showCustomAlert("రిజిస్ట్రేషన్ నిరాకరించబడింది", "ఈ మొబైల్ నంబర్‌తో ఇప్పటికే అకౌంట్ రిజిస్టర్ చేయబడి ఉంది!");
                 return;
             }
 
@@ -1584,11 +1460,11 @@
                 let res = await fetch(_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }, mode: "cors" });
                 let result = await res.json();
                 hideLoader();
-                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ ఆర్గనైజేషన్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
+                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
                 switchView('loginView'); 
             } catch(e) { 
                 hideLoader(); 
-                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ ఆర్గనైజేషన్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
+                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
                 switchView('loginView'); 
             }
         }
@@ -1660,7 +1536,7 @@
                 document.getElementById('mainHeader').classList.add('hidden');
                 document.getElementById('loggedNavMenu').classList.remove('hidden');
                 openDashboardModule();
-                document.getElementById('displayOrgName').innerText = currentUser.orgName;
+                document.getElementById('displayOrgName').innerText = currentUser.orgName || (currentUser.adminName + "'s Hub");
 
                 let floatBtn = document.getElementById('floatingWhatsAppBtn');
                 if(floatBtn) floatBtn.classList.remove('hidden');
@@ -1759,30 +1635,6 @@
             closeModal('addOccasionModal');
             renderOccasions();
             show3DSuccessModal("అకేషన్ సృష్టించబడింది!", "మొదటి అకేషన్ ఉచితంగా సృష్టించబడింది.");
-        }
-
-        function openPay49Modal(occId, occName) {
-            selectedOccasionId = occId;
-            document.getElementById('pay49OccName').innerText = occName;
-            document.getElementById('upiTransactionId').value = '';
-            openModal('pay49Modal');
-        }
-
-        async function confirmPaymentDone() {
-            let transactionId = document.getElementById('upiTransactionId').value.trim();
-            if(!transactionId) { showCustomAlert("ట్రాన్సాక్షన్ ఐడీ", "దయచేసి ట్రాన్సాక్షన్ ఐడీ ఎంటర్ చేయండి!"); return; }
-
-            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
-            if(occ) {
-                occ.transactionId = transactionId;
-                occ.status = "pending";
-                showLoader();
-                await syncUserDataWithSheet();
-                hideLoader();
-                closeModal('pay49Modal');
-                show3DSuccessModal("సమర్పించబడింది!", "పేమెంట్ పరిశీలనలో ఉంది.");
-                renderOccasions();
-            }
         }
 
         function renderOccasions() {
