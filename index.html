@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Donation Book</title>
+    <title>Donation Book & OmniHub Master</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <!-- Google Fonts -->
@@ -212,7 +212,7 @@
             </div>
 
             <div class="flex justify-between items-center glow-card p-3 rounded-2xl moving-border shadow-xl">
-                <h3 class="font-bold text-xs text-[#f59e0b]">📅 Occasions (చందాలు & వేడుకలు)</h3>
+                <h3 class="font-bold text-xs text-[#f59e0b]">📅 Occasions (చందాలు & వేడుకలు - 1st Free, Next Paid)</h3>
                 <button onclick="openAddOccasionModal()" class="bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-bold text-[11px] px-3 py-1.5 rounded-xl cursor-pointer">+ Add Occasion</button>
             </div>
             <div id="occasionsContainer" class="space-y-3"></div>
@@ -351,7 +351,7 @@
 
             <!-- EMI Purchase Setup -->
             <div class="glow-card p-3.5 rounded-2xl moving-border shadow-xl space-y-2.5 text-xs">
-                <h3 class="font-bold text-xs text-[#f59e0b]">💳 EMI పర్చేస్ సెటప్ & వాట్సాప్ రిమైండర్ (EMI & WhatsApp Reminder)</h3>
+                <h3 class="font-bold text-xs text-[#f59e0b]">💳 EMI పర్చేస్ సెటప్</h3>
                 <div class="grid grid-cols-2 gap-1.5">
                     <input type="text" id="emiItemName" placeholder="వస్తువు పేరు (Item Name)" class="p-2 rounded-xl bg-stone-950 text-white border border-stone-800">
                     <input type="number" id="emiMonthlyAmt" placeholder="నెలవారీ EMI (Monthly ₹)" class="p-2 rounded-xl bg-stone-950 text-white border border-stone-800">
@@ -364,7 +364,7 @@
                     <label class="text-[10px] text-[#f59e0b] font-bold block mb-0.5">ప్రతీ నెల EMI కట్టాల్సిన తేదీ (ఉదా: 5వ తేదీ):</label>
                     <input type="number" id="emiDueDate" placeholder="నెల తేదీ (1 నుండి 31 వరకు)" min="1" max="31" class="w-full p-2 rounded-xl bg-stone-950 text-white border border-stone-800 text-xs">
                 </div>
-                <button onclick="saveEmiItem()" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl cursor-pointer">EMI సెటప్ చేయి & రిమైండర్ సిద్ధం చేయి</button>
+                <button onclick="saveEmiItem()" class="w-full bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl cursor-pointer">EMI సెటప్ చేయి</button>
                 <div id="emiTrackerList" class="space-y-1 pt-1"></div>
             </div>
 
@@ -426,6 +426,18 @@
             </div>
         </div>
 
+        <!-- 5. E-Commerce Store View (Coming Soon) -->
+        <div id="storeModuleView" class="page-view space-y-4 hidden text-center py-12">
+            <div class="glow-card p-8 rounded-2xl moving-border space-y-4 shadow-xl max-w-sm mx-auto">
+                <div class="text-5xl">🛒🚀</div>
+                <h2 class="title-font text-xl font-black text-[#f59e0b]">Shopping Feature Available Soon!</h2>
+                <p class="text-xs text-stone-300 leading-relaxed">
+                    ఈ షాపింగ్ మరియు ఈ-కామర్స్ ఫీచర్ త్వరలోనే మీ ముందుకు రానుంది. దయచేసి వేచి ఉండండి!
+                </p>
+                <button onclick="openDashboardModule()" class="bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black px-4 py-2 rounded-xl text-xs cursor-pointer shadow">← డ్యాష్‌బోర్డ్‌కు వెళ్ళండి</button>
+            </div>
+        </div>
+
     </main>
 
     <!-- Floating WhatsApp Support Button -->
@@ -439,7 +451,7 @@
     </div>
 
     <!-- Edit Org Name Modal -->
-    <div id="editOrgModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="editOrgModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
             <div class="flex justify-between items-center border-b border-stone-800 pb-2">
                 <h3 class="font-black text-sm text-[#f59e0b]">✏️ సంస్థ పేరును మార్చండి (Edit Org Name)</h3>
@@ -461,11 +473,18 @@
             <h2 class="title-font text-base font-black text-[#f59e0b]">📊 Monthly Financial Comparison</h2>
             <button onclick="closeMonthlyComparisonWindow()" class="bg-stone-800 text-white font-bold px-3 py-1 rounded-xl text-xs cursor-pointer">← Back</button>
         </div>
+        <div class="glow-card p-2 rounded-2xl moving-border flex justify-around text-[10px] font-bold shadow-xl">
+            <button onclick="setComparePeriod(1)" id="periodBtn1" class="px-2.5 py-1.5 rounded bg-[#f59e0b] text-stone-950">1 Month</button>
+            <button onclick="setComparePeriod(2)" id="periodBtn2" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">2 Months</button>
+            <button onclick="setComparePeriod(3)" id="periodBtn3" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">3 Months</button>
+            <button onclick="setComparePeriod(4)" id="periodBtn4" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">4 Months</button>
+            <button onclick="setComparePeriod(6)" id="periodBtn6" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">6 Months</button>
+        </div>
         <div id="monthlyComparisonWindowBody" class="space-y-3 pb-10"></div>
     </div>
 
     <!-- Custom Date Range Filter Modal -->
-    <div id="customDateFilterModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="customDateFilterModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
             <div class="flex justify-between items-center border-b border-stone-800 pb-2">
                 <h3 class="font-black text-sm text-[#f59e0b]">📅 కస్టమ్ తేదీల ఫిల్టర్</h3>
@@ -483,33 +502,25 @@
     </div>
 
     <!-- Global Loader -->
-    <div id="globalLoader" class="fixed inset-0 bg-black/80 z-[99999] hidden flex flex-col items-center justify-center space-y-3">
+    <div id="globalLoader" class="fixed inset-0 bg-black/80 z-[999999] hidden flex flex-col items-center justify-center space-y-3">
         <div class="w-10 h-10 border-4 border-[#f59e0b] border-t-transparent rounded-full spinner"></div>
         <p class="text-white font-bold text-xs tracking-wider">దయచేసి వేచి ఉండండి...</p>
     </div>
 
-    <!-- 3D Success Popup Modal -->
-    <div id="success3DModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
-        <div class="glow-card text-white rounded-2xl w-full max-w-sm p-6 text-center space-y-4 moving-border shadow-2xl modal-3d-effect">
-            <div class="text-5xl animate-bounce">🎉</div>
-            <h3 id="successModalTitle" class="font-black text-xl text-[#f59e0b]">విజయం!</h3>
-            <p id="successModalDesc" class="text-xs text-stone-300 leading-relaxed">పని విజయవంతంగా పూర్తయింది.</p>
-            <button onclick="closeModal('success3DModal')" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2.5 rounded-xl shadow cursor-pointer">కొనసాగించండి</button>
-        </div>
-    </div>
-
-    <!-- Professional Alert Popup Modal -->
-    <div id="customAlertModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <!-- Professional Alert / Pending Approval Popup Modal -->
+    <div id="customAlertModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-xs p-5 text-center space-y-3 moving-border shadow-2xl modal-3d-effect">
-            <div id="alertIcon" class="text-3xl">⚠️</div>
-            <h3 id="alertTitle" class="font-bold text-base text-[#f59e0b]">గమనిక</h3>
-            <p id="alertMessage" class="text-xs text-stone-300 leading-relaxed"></p>
-            <button onclick="closeModal('customAlertModal')" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">సరే</button>
+            <div id="alertIcon" class="text-3xl">⏳</div>
+            <h3 id="alertTitle" class="font-bold text-base text-[#f59e0b]">Pending Approval</h3>
+            <p id="alertMessage" class="text-xs text-stone-300 leading-relaxed">For approval contact admin & share screenshot.</p>
+            <div id="alertButtonContainer">
+                <!-- Dynamic Button injected via JS -->
+            </div>
         </div>
     </div>
 
     <!-- Forgot Password Modal -->
-    <div id="forgotModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="forgotModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-3 shadow-2xl moving-border modal-3d-effect">
             <div class="flex justify-between items-center border-b border-stone-800 pb-2">
                 <h3 class="font-black text-sm text-[#f59e0b]">🔑 M-PIN రికవరీ</h3>
@@ -525,7 +536,7 @@
     </div>
 
     <!-- Members Management Modal -->
-    <div id="membersModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="membersModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-[#f59e0b] text-stone-950 flex justify-between items-center">
                 <h3 class="font-bold text-base">👥 ఆర్గనైజేషన్ సభ్యులు</h3>
@@ -546,7 +557,7 @@
     </div>
 
     <!-- Add Occasion Modal -->
-    <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="addOccasionModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-[#f59e0b] text-stone-950 flex justify-between items-center">
                 <h3 class="font-bold text-sm">➕ కొత్త అకేషన్ జోడించండి</h3>
@@ -559,8 +570,25 @@
         </div>
     </div>
 
+    <!-- Pay ₹49 Fee UPI Verification Modal -->
+    <div id="pay49Modal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
+        <div class="glow-card text-white rounded-2xl w-full max-w-sm p-5 space-y-4 shadow-2xl text-center moving-border modal-3d-effect">
+            <h3 class="font-black text-lg text-[#f59e0b]">💳 ₹49 యాక్టివేషన్ ఫీజు చెల్లించండి</h3>
+            <p class="text-xs text-stone-300">QR స్కాన్ చేసి ₹49 చెల్లించండి <span id="pay49OccName" class="text-[#f59e0b] font-bold">--</span> (nageshyadav4u@oksbi):</p>
+            <div class="bg-white p-3 rounded-xl inline-block shadow-inner border border-stone-800">
+                <img src="https://cdn.corenexis.com/f/zRQYZdnIfgI.jpeg" alt="UPI QR Code" class="w-44 h-44 mx-auto object-contain">
+            </div>
+            <div class="space-y-2 text-left">
+                <label class="text-[11px] font-bold text-[#f59e0b] block">UPI ట్రాన్సాక్షన్ ఐడీ ఎంటర్ చేయండి:</label>
+                <input type="text" id="upiTransactionId" placeholder="ఉదా: 123456789012" class="w-full p-2 rounded-xl bg-stone-950 text-white border border-stone-800 text-xs font-mono">
+            </div>
+            <button onclick="confirmPaymentDone()" class="w-full bg-emerald-600 text-white font-black py-2.5 rounded-xl shadow cursor-pointer">ట్రాన్సాక్షన్ ఐడీ సమర్పించండి</button>
+            <button onclick="closeModal('pay49Modal')" class="text-stone-400 text-xs underline cursor-pointer block mx-auto">రద్దు చేయి</button>
+        </div>
+    </div>
+
     <!-- Accounts Control Panel Modal -->
-    <div id="accountsModal" class="fixed inset-0 bg-black/80 hidden z-[90000] flex items-center justify-center p-4">
+    <div id="accountsModal" class="fixed inset-0 bg-black/80 hidden z-[990000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-md max-h-[90vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-[#f59e0b] text-stone-950 flex justify-between items-center">
                 <div>
@@ -574,6 +602,30 @@
                     <button onclick="openDonationsListModal()" class="bg-emerald-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">💰 విరాళాలు చూడండి</button>
                     <button onclick="openExpensesListModal()" class="bg-red-700 text-white font-bold py-2 px-3 rounded-xl text-xs shadow cursor-pointer">📊 ఖర్చులు చూడండి</button>
                 </div>
+
+                <!-- Dynamic Cost Estimation Section -->
+                <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
+                    <h4 class="font-bold text-[#f59e0b] border-b border-stone-800 pb-1 flex justify-between items-center text-xs">
+                        <span>📊 డైనమిక్ కాస్ట్ ఎస్టిమేషన్</span>
+                        <button onclick="toggleEditEstimation()" class="text-[10px] bg-[#f59e0b] text-stone-950 font-bold px-2 py-0.5 rounded cursor-pointer">మార్చు / జోడించు</button>
+                    </h4>
+                    <div id="estViewMode" class="space-y-1 text-stone-300">
+                        <div id="estimationItemsList" class="space-y-1 max-h-24 overflow-y-auto pr-1">
+                            <p class="text-stone-500 text-center py-1">ఎటిమేషన్స్ లేవు</p>
+                        </div>
+                        <div class="border-t border-stone-800 pt-1 space-y-0.5 font-bold">
+                            <div class="flex justify-between"><span class="text-stone-400">మొత్తం అంచనా ఖర్చు:</span><span id="estCostDisplay" class="text-[#f59e0b]">₹0</span></div>
+                            <div class="flex justify-between"><span class="text-stone-400">మొత్తం వసూలు:</span><span id="estCollectedDisplay" class="text-emerald-400">₹0</span></div>
+                            <div class="flex justify-between border-t border-stone-800 pt-1"><span class="text-amber-300">లోటు (Deficit):</span><span id="estGapDisplay" class="text-amber-400">₹0</span></div>
+                        </div>
+                    </div>
+                    <div id="estEditMode" class="hidden space-y-2 pt-1">
+                        <div id="dynamicEstimationInputs" class="space-y-1.5 max-h-28 overflow-y-auto pr-1"></div>
+                        <button onclick="addEstimationRow('', '')" class="w-full bg-stone-900 text-[#f59e0b] font-bold py-1 rounded text-[11px] border border-stone-800 cursor-pointer">+ అంశం జోడించు</button>
+                        <button onclick="saveEstimationUpdates()" class="w-full bg-emerald-600 text-white font-bold py-1.5 rounded shadow cursor-pointer mt-1">సేవ్ చేయి</button>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-3 gap-1.5 text-center">
                     <div class="bg-emerald-950 p-2.5 rounded-xl border border-emerald-900"><span class="text-[9px] text-emerald-400 block">విరాళం</span><span id="accTotInc" class="font-black text-xs text-white">₹0</span></div>
                     <div class="bg-red-950 p-2.5 rounded-xl border border-red-900"><span class="text-[9px] text-red-400 block">ఖర్చు</span><span id="accTotExp" class="font-black text-xs text-white">₹0</span></div>
@@ -614,7 +666,7 @@
     </div>
 
     <!-- Separate View Modals for Donations & Expenses -->
-    <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+    <div id="donationsListModal" class="fixed inset-0 bg-black/90 hidden z-[995000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-emerald-950 flex justify-between items-center border-b border-emerald-800">
                 <h3 class="font-bold text-sm text-emerald-300">💰 అన్ని విరాళాలు</h3>
@@ -628,7 +680,7 @@
         </div>
     </div>
 
-    <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[95000] flex items-center justify-center p-4">
+    <div id="expensesListModal" class="fixed inset-0 bg-black/90 hidden z-[995000] flex items-center justify-center p-4">
         <div class="glow-card text-white rounded-2xl w-full max-w-sm max-h-[85vh] flex flex-col shadow-2xl overflow-hidden moving-border modal-3d-effect">
             <div class="p-3 bg-red-950 flex justify-between items-center border-b border-red-800">
                 <h3 class="font-bold text-sm text-red-300">📊 అన్ని ఖర్చులు</h3>
@@ -640,7 +692,7 @@
 
     <!-- Master JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbxpe5-Njp42FDAeVFPVltL_opKOKy-fUMx7kmn7ChbpNW66D1cY2NABlfonesqwY8kW/exec";
+        const _URL = "https://script.google.com/macros/s/AKfycbxvMPpj60jlTwJfslYZ4YVbG3dL_JheBAFuGVVif1SU2dKLdwE-yED5eUQqI72yczo/exechttps://script.google.com/macros/s/AKfycbySgrZwpAqmY4rNftm9rDfh9l2HQxKLObAYu14KRL_OCpCaZCrG20DAKR7QLeBrSX0/exec";
         const DB_CURRENT = 'youth_current_user';
         const HOME_EXP_KEY = 'omnihub_home_expenses_master_final_v14';
         const SUB_CHECK_KEY = 'home_expenses_reg_timestamp';
@@ -648,8 +700,6 @@
         let currentUser = JSON.parse(localStorage.getItem(DB_CURRENT)) || null;
         let homeAppData = JSON.parse(localStorage.getItem(HOME_EXP_KEY)) || { transactions: [], loans: [], emis: [], itemPrices: [], customOthersList: [], goals: [], shoppingList: [] };
         let selectedOccasionId = null;
-        let isPhoneVerified = false;
-        let isSellerWaVerified = true;
         let currentComparePeriod = 1;
 
         let customDateFilterActive = false;
@@ -718,6 +768,31 @@
             document.getElementById('alertTitle').innerText = title;
             document.getElementById('alertMessage').innerText = message;
             document.getElementById('alertIcon').innerText = icon;
+            
+            let btnContainer = document.getElementById('alertButtonContainer');
+            btnContainer.innerHTML = `<button onclick="closeModal('customAlertModal')" class="w-full bg-[#f59e0b] text-stone-950 font-black py-2 rounded-xl shadow cursor-pointer">సరే</button>`;
+            
+            openModal('customAlertModal');
+        }
+
+        function showPendingApprovalAlert(occName, userMobile, transactionId) {
+            document.getElementById('alertTitle').innerText = "Pending Approval";
+            document.getElementById('alertMessage').innerText = "For approval contact admin & share screenshot.";
+            document.getElementById('alertIcon').innerText = "⏳";
+
+            let waMsg = encodeURIComponent(`Hello Admin,\n\nI have paid Rs. 49 for creating the occasion "${occName}".\nMy Registration/Mobile Number is: ${userMobile}\nTransaction ID: ${transactionId}\n\nPlease review and approve my occasion for access.`);
+            let waUrl = `https://api.whatsapp.com/send?phone=919111692967&text=${waMsg}`;
+
+            let btnContainer = document.getElementById('alertButtonContainer');
+            btnContainer.innerHTML = `
+                <div class="space-y-2 pt-1">
+                    <a href="${waUrl}" target="_blank" class="w-full bg-[#25d366] hover:bg-[#20ba5a] text-white font-black py-2.5 rounded-xl shadow flex items-center justify-center gap-1.5 cursor-pointer text-xs">
+                        <span>💬</span> <span>WhatsApp లో స్క్రీన్ షాట్ పంపుటకు క్లిక్ చేయండి</span>
+                    </a>
+                    <button onclick="closeModal('customAlertModal')" class="w-full bg-stone-800 text-stone-300 font-bold py-2 rounded-xl text-xs cursor-pointer">మూసివేయి</button>
+                </div>
+            `;
+
             openModal('customAlertModal');
         }
 
@@ -822,8 +897,8 @@
         }
 
         function openStoreModule() { 
+            switchView('storeModuleView');
             updateActiveNav('navBtnStore');
-            showCustomAlert("Coming Soon", "🛒 Shopping Service Available Soon! Stay tuned for exciting updates.", "🚀");
         }
 
         function openAddOccasionModal() { openModal('addOccasionModal'); }
@@ -1071,13 +1146,8 @@
             document.getElementById('emiPaidCount').value = '';
             document.getElementById('emiDueDate').value = '';
             renderHomeExpensesUI();
-            show3DSuccessModal("EMI సెటప్", "EMI షెడ్యూల్ మరియు వాట్సాప్ రిమైండర్ సిద్ధం చేయబడింది.");
+            show3DSuccessModal("EMI సెటప్", "EMI షెడ్యూల్ విజయవంతంగా సేవ్ చేయబడింది.");
             syncHomeDataToSheet("saveHomeEmi", { emi: emiObj });
-        }
-
-        function sendEmiWhatsAppReminder(itemName, monthlyAmt, dueDate) {
-            let msg = encodeURIComponent(`⚠️ EMI Remainder Alert:\nమీరు కొన్న *${itemName}* వస్తువుకు సంబంధించిన నెలవారీ EMI ₹${monthlyAmt} ఈ నెల ${dueDate}వ తేదీలోపు (లేదా రేపు) చెల్లించవలసి ఉంటుంది. దయచేసి గమనించగలరు.`);
-            window.open(`https://api.whatsapp.com/send?text=${msg}`, '_blank');
         }
 
         function removeEmi(id) {
@@ -1156,7 +1226,6 @@
                         </div>
                         <div class="flex justify-between items-center text-[10px] text-stone-400 border-t border-stone-900 pt-1">
                             <span>మిగిలినవి: ${e.totalTenor - e.paidCount}/${e.totalTenor} నెలలు</span>
-                            <button onclick="sendEmiWhatsAppReminder('${e.itemName}', ${e.monthlyAmt}, ${e.dueDate})" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2 py-1 rounded cursor-pointer">💬 WhatsApp Remainder</button>
                         </div>
                     </div>
                 `).join('');
@@ -1255,10 +1324,10 @@
             doc.setTextColor(16, 185, 129);
             doc.text("1. Transactions History", 14, nextY);
 
-            let txBody = filteredTx.length > 0 ? filteredTx.map((t, idx) => [idx + 1, formatDate(t.date), t.tag, t.desc, `${t.type === 'income' ? '+' : '-'}Rs. ${t.amount}`]) : [['-', '-', '-', 'No Transactions', '-']];
+            let txBody = filteredTx.length > 0 ? filteredTx.map((t, idx) => [idx + 1, formatDate(t.date), t.tag, t.desc.replace(/[^\x00-\x7F]/g, ""), `${t.type === 'income' ? '+' : '-'}Rs. ${t.amount}`]) : [['-', '-', '-', 'No Transactions', '-']];
             doc.autoTable({
                 startY: nextY + 4,
-                head: [['#', 'Date', 'Tag', 'Description / Price Hike Notes', 'Amount']],
+                head: [['#', 'Date', 'Tag', 'Description', 'Amount']],
                 body: txBody,
                 theme: 'striped',
                 headStyles: { fillColor: [16, 185, 129] },
@@ -1363,16 +1432,119 @@
                 `;
             }
 
+            let divFactor = Math.max(1, currentComparePeriod - 1);
+            let avgPrevInc = Math.round(prevInc / divFactor);
+            let avgPrevExp = Math.round(prevExp / divFactor);
+            let prevSav = avgPrevInc - avgPrevExp;
+
+            let totalDebt = (homeAppData.loans || []).reduce((s, l) => s + Number(l.totalDues), 0);
+            let totalEmi = (homeAppData.emis || []).reduce((s, e) => s + Number(e.monthlyAmt), 0);
+
+            let directionText = "➡️ Stable (స్థిరంగా ఉంది)";
+            let directionColor = "text-amber-400";
+            if (curSav > prevSav && curExp <= avgPrevExp) {
+                directionText = "🌱 Improving (ఆర్థికంగా మెరుగుపడుతున్నారు ↑)";
+                directionColor = "text-emerald-400";
+            } else if (curExp > curInc || curExp > avgPrevExp * 1.2) {
+                directionText = "⚠️ Needs Attention (ఖర్చులు పెరుగుతున్నాయి)";
+                directionColor = "text-red-400";
+            }
+
+            let curCatMap = { 'నిత్యావసర సరుకులు': 0, 'ఇంటి ముఖ్యమైన ఖర్చులు & బిల్లులు': 0, 'అదర్స్': 0 };
+            let prevCatMap = { 'నిత్యావసర సరుకులు': 0, 'ఇంటి ముఖ్యమైన ఖర్చులు & బిల్లులు': 0, 'అదర్స్': 0 };
+
+            curTx.filter(t => t.type === 'expense').forEach(t => {
+                if (t.desc.startsWith('నిత్యావసర సరుకులు')) curCatMap['నిత్యావసర సరుకులు'] += t.amount;
+                else if (t.desc.startsWith('ఇంటి ఖర్చు')) curCatMap['ఇంటి ముఖ్యమైన ఖర్చులు & బిల్లులు'] += t.amount;
+                else curCatMap['అదర్స్'] += t.amount;
+            });
+
+            for(let i = 1; i <= currentComparePeriod; i++) {
+                let pM = curM - i;
+                let pY = curY;
+                while(pM <= 0) { pM += 12; pY -= 1; }
+                let pStr = `${pY}-${String(pM).padStart(2, '0')}`;
+                let pTx = homeAppData.transactions.filter(t => t.date.startsWith(pStr));
+                pTx.filter(t => t.type === 'expense').forEach(t => {
+                    if (t.desc.startsWith('నిత్యావసర సరుకులు')) prevCatMap['నిత్యావసర సరుకులు'] += t.amount;
+                    else if (t.desc.startsWith('ఇంటి ఖర్చు')) prevCatMap['ఇంటి ముఖ్యమైన ఖర్చులు & బిల్లులు'] += t.amount;
+                    else prevCatMap['అదర్స్'] += t.amount;
+                });
+            }
+
+            let incDiffPct = avgPrevInc > 0 ? (((curInc - avgPrevInc) / avgPrevInc) * 100).toFixed(0) : 0;
+            let savDiff = curSav - prevSav;
+
             let container = document.getElementById('monthlyComparisonWindowBody');
             container.innerHTML = `
                 <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 text-center space-y-1">
-                    <span class="text-[10px] text-stone-400 block">Financial Trend</span>
+                    <span class="text-[10px] text-stone-400 block">Your Financial Direction (${currentComparePeriod}M Trend)</span>
+                    <strong class="text-sm ${directionColor}">${directionText}</strong>
                 </div>
+
                 <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
                     <div class="flex justify-between items-center text-[10px]">
                         <strong class="text-[#f59e0b]">📈 Income vs Expense Bar Chart</strong>
+                        <div class="flex gap-2"><span class="text-emerald-400">■ Income</span><span class="text-red-400">■ Expense</span></div>
                     </div>
                     <div class="flex justify-between items-end pt-2 border-t border-stone-900">${monthlyBarsHTML}</div>
+                </div>
+
+                <div class="space-y-2">
+                    <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
+                        <div><strong class="block text-stone-300">💵 ఆదాయం (Income)</strong><span class="text-[10px] text-stone-500">గత: ₹${avgPrevInc} | ఈ నెల: ₹${curInc}</span></div>
+                        <span class="font-bold ${curInc >= avgPrevInc ? 'text-emerald-400' : 'text-red-400'}">${curInc >= avgPrevInc ? '↑' : '↓'} ₹${Math.abs(curInc - avgPrevInc)}</span>
+                    </div>
+                    <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
+                        <div><strong class="block text-stone-300">💸 ఖర్చులు (Expenses)</strong><span class="text-[10px] text-stone-500">గత: ₹${avgPrevExp} | ఈ నెల: ₹${curExp}</span></div>
+                        <span class="font-bold ${curExp <= avgPrevExp ? 'text-emerald-400' : 'text-red-400'}">₹${Math.abs(curExp - avgPrevExp)}</span>
+                    </div>
+                    <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
+                        <div><strong class="block text-stone-300">💰 పొదుపు (Savings)</strong><span class="text-[10px] text-stone-500">గత: ₹${prevSav} | ఈ నెల: ₹${curSav}</span></div>
+                        <span class="font-bold ${curSav >= prevSav ? 'text-emerald-400' : 'text-red-400'}">${curSav >= prevSav ? '↑' : '↓'} ₹${Math.abs(curSav - prevSav)}</span>
+                    </div>
+                    <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
+                        <div><strong class="block text-stone-300">🏦 అప్పులు & వడ్డీలు (Total Debt)</strong><span class="text-[10px] text-stone-500">ప్రస్తుత బాకీ</span></div>
+                        <span class="font-bold text-red-400">₹${totalDebt}</span>
+                    </div>
+                    <div class="bg-stone-950 p-2.5 rounded-xl border border-stone-800 flex justify-between items-center">
+                        <div><strong class="block text-stone-300">💳 మొత్తం EMIలు</strong><span class="text-[10px] text-stone-500">నెలవారీ చెల్లింపులు</span></div>
+                        <span class="font-bold text-amber-400">₹${totalEmi}</span>
+                    </div>
+                </div>
+
+                <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
+                    <strong class="text-[#f59e0b] block text-[11px]">🛒 Category-wise Expense Comparison</strong>
+                    <div class="space-y-2">
+                        ${Object.entries(curCatMap).map(([cat, amt]) => {
+                            let pAmt = Math.round((prevCatMap[cat] || 0) / Math.max(1, currentComparePeriod));
+                            let diff = amt - pAmt;
+                            let pct = pAmt > 0 ? ((diff / pAmt) * 100).toFixed(1) : (amt > 0 ? 100 : 0);
+                            let badgeColor = diff > 0 ? 'text-red-400' : 'text-emerald-400';
+                            let arrow = diff > 0 ? '↑' : '↓';
+                            return `
+                                <div class="bg-stone-900 p-2 rounded-lg border border-stone-800 space-y-0.5 text-[11px]">
+                                    <div class="flex justify-between font-bold text-white">
+                                        <span>${cat}</span>
+                                        <span class="${badgeColor}">${arrow} ₹${Math.abs(diff)} (${pct}%)</span>
+                                    </div>
+                                    <div class="flex justify-between text-[10px] text-stone-400">
+                                        <span>గత సగటు: ₹${pAmt}</span>
+                                        <span>ఈ నెల: ₹${amt}</span>
+                                    </div>
+                                </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+
+                <div class="glow-card p-3 rounded-xl border border-[#f59e0b]/40 space-y-1.5 moving-border shadow-xl">
+                    <strong class="text-[#f59e0b] block text-[11px]">✨ What Changed This Month? (Key Insights)</strong>
+                    <ul class="text-[11px] text-stone-200 space-y-1.5 list-none">
+                        <li>✨ ఈ నెల మీ ఆదాయం ${Math.abs(incDiffPct)}% ${incDiffPct >= 0 ? 'పెరిగింది' : 'తగ్గింది'}</li>
+                        <li>🎉 మీ Savings ₹${Math.abs(savDiff)} ${savDiff >= 0 ? 'పెరిగాయి' : 'తగ్గాయి'}</li>
+                        <li>📌 మీ EMI ఖర్చులో ఎలాంటి మార్పు లేదు (₹${totalEmi})</li>
+                    </ul>
                 </div>
             `;
         }
@@ -1389,7 +1561,6 @@
             }
         }
 
-        // --- Edit Org Name functions ---
         function openEditOrgModal() {
             document.getElementById('editOrgNameInput').value = currentUser.orgName || '';
             openModal('editOrgModal');
@@ -1409,7 +1580,6 @@
             syncUserDataWithSheet();
         }
 
-        // --- Register Organization with Optional Org Name Support ---
         async function registerOrganization() {
             let orgName = document.getElementById('regOrgName').value.trim();
             let adminName = document.getElementById('regAdminName').value.trim();
@@ -1424,7 +1594,6 @@
                 return;
             }
 
-            // Optional Org Name check
             if(!orgName) {
                 orgName = adminName + "'s Hub";
             }
@@ -1498,9 +1667,75 @@
                     return;
                 }
 
+                let subMemberFoundOrg = null;
+                let matchedSubMember = null;
+                for(let org of allLocalOrgs) {
+                    if(org.members) {
+                        let mMatch = org.members.find(m => m.mobile === mobile && m.pass === pass);
+                        if(mMatch) {
+                            subMemberFoundOrg = org;
+                            matchedSubMember = mMatch;
+                            break;
+                        }
+                    }
+                }
+
+                if(subMemberFoundOrg && matchedSubMember) {
+                    currentUser = {
+                        orgName: subMemberFoundOrg.orgName,
+                        adminName: matchedSubMember.name,
+                        mobile: mobile,
+                        pass: pass,
+                        parentMobile: subMemberFoundOrg.mobile,
+                        isMainAdmin: false,
+                        occasions: subMemberFoundOrg.occasions || []
+                    };
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+
                 showCustomAlert("లాగిన్ విఫలమైంది", "తప్పు మొబైల్ నంబర్ లేదా పాస్‌వర్డ్!");
             } catch(e) { 
                 hideLoader(); 
+                let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
+                let mainOrgMatch = allLocalOrgs.find(o => o.mobile === mobile && o.pass === pass);
+                if(mainOrgMatch) {
+                    currentUser = mainOrgMatch;
+                    currentUser.isMainAdmin = true;
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+                
+                let subMemberFoundOrg = null;
+                let matchedSubMember = null;
+                for(let org of allLocalOrgs) {
+                    if(org.members) {
+                        let mMatch = org.members.find(m => m.mobile === mobile && m.pass === pass);
+                        if(mMatch) {
+                            subMemberFoundOrg = org;
+                            matchedSubMember = mMatch;
+                            break;
+                        }
+                    }
+                }
+
+                if(subMemberFoundOrg && matchedSubMember) {
+                    currentUser = {
+                        orgName: subMemberFoundOrg.orgName,
+                        adminName: matchedSubMember.name,
+                        mobile: mobile,
+                        pass: pass,
+                        parentMobile: subMemberFoundOrg.mobile,
+                        isMainAdmin: false,
+                        occasions: subMemberFoundOrg.occasions || []
+                    };
+                    localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    initDashboard();
+                    return;
+                }
+
                 showCustomAlert("లాగిన్ లోపం", "దయచేసి సరైన వివరాలు ఎంటర్ చేయండి!"); 
             }
         }
@@ -1516,25 +1751,67 @@
 
             showLoader();
             try {
-                let res = await fetch(`${_URL}?action=recover&mobile=${mobile}&mpin=${mpin}`, { method: "GET", headers: { "Accept": "application/json" }, mode: "cors" });
-                let result = await res.json();
-                hideLoader();
-                if(result && (result.status === "success" || result.password || result.pass)) {
-                    let passToShow = result.password || result.pass || "";
-                    document.getElementById('recoveredPasswordDisplay').innerHTML = `<p class="text-emerald-400 font-bold">మీ పాస్‌వర్డ్: ${passToShow}</p>`;
-                } else {
-                    showCustomAlert("ధృవీకరణ విఫలమైంది", "తప్పు మొబైల్ నంబర్ లేదా M-PIN!");
+                let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
+                let mainAccount = allLocalOrgs.find(o => o.mobile === mobile && o.mpin === mpin);
+
+                let subMemberAccounts = [];
+                for(let org of allLocalOrgs) {
+                    if(org.members) {
+                        let matches = org.members.filter(m => m.mobile === mobile);
+                        if(matches.length > 0) {
+                            subMemberAccounts.push({ orgName: org.orgName, members: matches });
+                        }
+                    }
                 }
+
+                hideLoader();
+
+                let resultHTML = "";
+                if(mainAccount) {
+                    resultHTML += `<p class="text-emerald-400 font-bold">🏛️ మెయిన్ అకౌంట్ పాస్‌వర్డ్: <b>${mainAccount.pass}</b></p>`;
+                }
+                if(subMemberAccounts.length > 0) {
+                    subMemberAccounts.forEach(sub => {
+                        sub.members.forEach(m => {
+                            resultHTML += `<p class="text-amber-400 font-bold">👥 [${sub.orgName}] సబ్-మెంబర్ పాస్‌వర్డ్: <b>${m.pass}</b></p>`;
+                        });
+                    });
+                }
+
+                if(resultHTML === "") {
+                    let res = await fetch(`${_URL}?action=recover&mobile=${mobile}&mpin=${mpin}`, { method: "GET", headers: { "Accept": "application/json" }, mode: "cors" });
+                    let result = await res.json();
+                    if(result && (result.status === "success" || result.password || result.pass)) {
+                        let passToShow = result.password || result.pass || "";
+                        resultHTML = `<p class="text-emerald-400 font-bold">మీ పాస్‌వర్డ్: ${passToShow}</p>`;
+                    } else {
+                        showCustomAlert("ధృవీకరణ విఫలమైంది", "తప్పు మొబైల్ నంబర్ లేదా M-PIN!");
+                        return;
+                    }
+                }
+
+                document.getElementById('recoveredPasswordDisplay').innerHTML = resultHTML;
+
             } catch(e) { 
                 hideLoader(); 
                 showCustomAlert("కనెక్షన్ లోపం", "రికవరీ విఫలమైంది!"); 
             }
         }
 
-        function initDashboard() {
+        async function initDashboard() {
             if(currentUser) {
                 document.getElementById('mainHeader').classList.add('hidden');
                 document.getElementById('loggedNavMenu').classList.remove('hidden');
+                
+                try {
+                    let res = await fetch(`${_URL}?action=getOrg&mobile=${currentUser.mobile}`, { method: "GET", headers: { "Accept": "application/json" }, mode: "cors" });
+                    let result = await res.json();
+                    if (result.status === "success" && result.user && result.user.occasions) {
+                        currentUser.occasions = result.user.occasions;
+                        localStorage.setItem(DB_CURRENT, JSON.stringify(currentUser));
+                    }
+                } catch(e) {}
+
                 openDashboardModule();
                 document.getElementById('displayOrgName').innerText = currentUser.orgName || (currentUser.adminName + "'s Hub");
 
@@ -1577,6 +1854,13 @@
             if(!currentUser.members) currentUser.members = [];
 
             currentUser.members.push({ name, designation, mobile, pass, parentMobile: currentUser.mobile });
+            
+            let cache = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
+            let existingIdx = cache.findIndex(o => o.mobile === currentUser.mobile);
+            if(existingIdx !== -1) cache[existingIdx] = currentUser;
+            else cache.push(currentUser);
+            localStorage.setItem('all_registered_orgs_cache', JSON.stringify(cache));
+
             syncUserDataWithSheet();
             renderControlMembers();
             document.getElementById('memberName').value = '';
@@ -1625,7 +1909,7 @@
                 estimations: [],
                 createdAt: new Date().toLocaleString(),
                 entries: [],
-                status: isFirstOccasion ? "free_trial" : "free_limit_expired"
+                status: isFirstOccasion ? "approved" : "pending"
             };
 
             currentUser.occasions.push(newOcc);
@@ -1634,7 +1918,40 @@
             hideLoader();
             closeModal('addOccasionModal');
             renderOccasions();
-            show3DSuccessModal("అకేషన్ సృష్టించబడింది!", "మొదటి అకేషన్ ఉచితంగా సృష్టించబడింది.");
+
+            if (isFirstOccasion) {
+                show3DSuccessModal("అకేషన్ సృష్టించబడింది!", "మొదటి అకేషన్ ఉచితంగా క్రియేట్ చేయబడింది.");
+            } else {
+                showCustomAlert("పేమెంట్ అవసరం", "రెండవ అకేషన్ నుండి ₹49 చెల్లించాలి. దయచేసి క్యూఆర్ కోడ్ స్కాన్ చేసి పేమెంట్ పూర్తి చేయండి!");
+                openPay49Modal(newOcc.id, newOcc.name);
+            }
+        }
+
+        function openPay49Modal(occId, occName) {
+            selectedOccasionId = occId;
+            document.getElementById('pay49OccName').innerText = occName;
+            document.getElementById('upiTransactionId').value = '';
+            openModal('pay49Modal');
+        }
+
+        async function confirmPaymentDone() {
+            let transactionId = document.getElementById('upiTransactionId').value.trim();
+            if(!transactionId) { showCustomAlert("ట్రాన్సాక్షన్ ఐడీ", "దయచేసి ట్రాన్సాక్షన్ ఐడీ ఎంటర్ చేయండి!"); return; }
+
+            let occ = currentUser.occasions.find(o => o.id === selectedOccasionId);
+            if(occ) {
+                occ.transactionId = transactionId;
+                occ.status = "pending";
+                showLoader();
+                await syncUserDataWithSheet();
+                hideLoader();
+                closeModal('pay49Modal');
+
+                let userMobile = currentUser.mobile || "";
+                let occTitle = occ.name || "";
+                showPendingApprovalAlert(occTitle, userMobile, transactionId);
+                renderOccasions();
+            }
         }
 
         function renderOccasions() {
@@ -1644,15 +1961,26 @@
                 return;
             }
             container.innerHTML = currentUser.occasions.map((occ, idx) => {
-                let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
-                let badge = idx === 0 ? '<span class="bg-emerald-950 text-emerald-300 text-[9px] px-2 py-0.5 rounded font-bold">ఉచిత అకేషన్</span>' : '<span class="bg-amber-950 text-amber-300 text-[9px] px-2 py-0.5 rounded font-bold">పెయిడ్ అకేషన్</span>';
+                let inc = occ.entries ? occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0) : 0;
+                let badge = idx === 0 ? '<span class="bg-emerald-950 text-emerald-300 text-[9px] px-2 py-0.5 rounded font-bold">ఉచిత అకేషన్ (1st)</span>' : '<span class="bg-amber-950 text-amber-300 text-[9px] px-2 py-0.5 rounded font-bold">పెయిడ్ అకేషన్</span>';
 
-                let actionBtn = `
-                    <div class="flex gap-1.5 pt-1">
-                        <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl cursor-pointer">📊 కంట్రోల్ ప్యానెల్</button>
-                        <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 text-stone-200 px-3 py-2 rounded-xl font-bold cursor-pointer" title="లింక్ షేర్ చేయి">🔗</button>
-                    </div>
-                `;
+                let actionBtn = "";
+                if (occ.status === "pending") {
+                    actionBtn = `
+                        <div class="space-y-1.5 pt-1">
+                            <div class="w-full bg-amber-950 text-amber-300 text-center font-bold py-2 rounded-xl text-xs border border-amber-800">⏳ Status: Pending (అప్రూవల్ కోసం వేచి ఉంది)</div>
+                            <button onclick="openPay49Modal('${occ.id}', '${occ.name}')" class="w-full bg-stone-800 hover:bg-stone-700 text-white font-bold py-1.5 rounded-xl text-[11px] cursor-pointer">💳 రీ-సబ్మిట్ / QR కోడ్</button>
+                        </div>
+                    `;
+                } else {
+                    actionBtn = `
+                        <div class="flex gap-1.5 pt-1">
+                            <button onclick="openAccountsControl('${occ.id}')" class="flex-1 bg-[#f59e0b] hover:bg-[#d97706] text-stone-950 font-black py-2 rounded-xl cursor-pointer">📊 కంట్రోల్ ప్యానెల్</button>
+                            <button onclick="shareOccasionLinkDirectly('${occ.id}', '${occ.name}')" class="bg-stone-800 text-stone-200 px-3 py-2 rounded-xl font-bold cursor-pointer" title="లింక్ షేర్ చేయి">🔗</button>
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="glow-card p-4 rounded-2xl border moving-border space-y-2 text-xs shadow-xl">
                         <div class="flex justify-between items-center">
@@ -1672,27 +2000,47 @@
         function openAccountsControl(occId) {
             selectedOccasionId = occId;
             let occ = currentUser.occasions.find(o => o.id === occId);
-            if(!occ) return;
-            document.getElementById('modalOccasionTitle').innerText = occ.name;
+            if(!occ) {
+                showCustomAlert("గమనిక", "అకేషన్ డేటా కనుగొనబడలేదు!");
+                return;
+            }
+
+            if (occ.status === "pending") {
+                showCustomAlert("లాక్ చేయబడింది", "ఈ అకేషన్ ఇంకా అప్రూవ్ కాలేదు. అడ్మిన్ అప్రూవ్ చేసిన తర్వాత మాత్రమే కంట్రోల్ ప్యానెల్ ఓపెన్ అవుతుంది!");
+                return;
+            }
+
+            let titleElem = document.getElementById('modalOccasionTitle');
+            if(titleElem) titleElem.innerText = occ.name;
 
             let estCost = Number(occ.estimatedCost || 0);
-            let inc = occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0);
+            let inc = occ.entries ? occ.entries.filter(e => e.type === 'income').reduce((sum, e) => sum + Number(e.amount), 0) : 0;
             let gap = estCost - inc;
 
-            document.getElementById('estCostDisplay').innerText = `₹${estCost}`;
-            document.getElementById('estCollectedDisplay').innerText = `₹${inc}`;
-            document.getElementById('estGapDisplay').innerText = `₹${gap > 0 ? gap : 0}`;
+            let costDisp = document.getElementById('estCostDisplay');
+            let collDisp = document.getElementById('estCollectedDisplay');
+            let gapDisp = document.getElementById('estGapDisplay');
+
+            if(costDisp) costDisp.innerText = `₹${estCost}`;
+            if(collDisp) collDisp.innerText = `₹${inc}`;
+            if(gapDisp) gapDisp.innerText = `₹${gap > 0 ? gap : 0}`;
 
             let parts = occ.estimations || [];
             let listDiv = document.getElementById('estimationItemsList');
-            listDiv.innerHTML = parts.length === 0 ? `<p class="text-stone-500 text-center py-1">ఎటిమేషన్స్ లేవు</p>` : parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800 pb-0.5"><span>${p.name}:</span><span class="text-[#f59e0b] font-bold">₹${p.cost}</span></div>`).join('');
+            if(listDiv) {
+                listDiv.innerHTML = parts.length === 0 ? `<p class="text-stone-500 text-center py-1">ఎటిమేషన్స్ లేవు</p>` : parts.map(p => `<div class="flex justify-between text-[11px] text-stone-300 border-b border-stone-800 pb-0.5"><span>${p.name}:</span><span class="text-[#f59e0b] font-bold">₹${p.cost}</span></div>`).join('');
+            }
 
             let editInputsContainer = document.getElementById('dynamicEstimationInputs');
-            editInputsContainer.innerHTML = '';
-            if(parts.length === 0) { addEstimationRow('', ''); } else { parts.forEach(p => addEstimationRow(p.name, p.cost)); }
+            if(editInputsContainer) {
+                editInputsContainer.innerHTML = '';
+                if(parts.length === 0) { addEstimationRow('', ''); } else { parts.forEach(p => addEstimationRow(p.name, p.cost)); }
+            }
 
-            document.getElementById('estViewMode').classList.remove('hidden');
-            document.getElementById('estEditMode').classList.add('hidden');
+            let estView = document.getElementById('estViewMode');
+            let estEdit = document.getElementById('estEditMode');
+            if(estView) estView.classList.remove('hidden');
+            if(estEdit) estEdit.classList.add('hidden');
 
             setDefaultEntryDate();
             renderFinancialEntries();
@@ -1824,7 +2172,7 @@
                 newEntry.type = 'item_donation';
                 newEntry.amount = 0; 
                 newEntry.estValue = estVal; 
-                newEntry.desc = `వస్తువుల విరాళం: ${goods} (దాత: ${donor})${estVal > 0 ? ' [అంచనా విలువ: ₹' + estVal + ']' : ''}`;
+                newEntry.desc = `Goods Donation: ${goods} (Donor: ${donor})${estVal > 0 ? ' [Est Value: Rs. ' + estVal + ']' : ''}`;
             } else {
                 let amount = document.getElementById('entryAmount').value.trim();
                 let desc = document.getElementById('entryDesc').value.trim();
@@ -1872,8 +2220,8 @@
                 document.getElementById('entryType').value = 'item_donation';
                 toggleEntryTypeField('item_donation');
                 let descText = ent.desc || "";
-                let donorMatch = descText.match(/దాత:\s*([^)]+)/);
-                let goodsMatch = descText.match(/వస్తువుల విరాళం:\s*(.*?)\s*\(దాత/);
+                let donorMatch = descText.match(/Donor:\s*([^)]+)/);
+                let goodsMatch = descText.match(/Goods Donation:\s*(.*?)\s*\(Donor/);
 
                 document.getElementById('itemDonorName').value = donorMatch ? donorMatch[1] : "";
                 document.getElementById('itemGoodsDesc').value = goodsMatch ? goodsMatch[1] : descText;
@@ -1974,6 +2322,7 @@
                 else upiTotal += Number(d.amount || 0);
             });
 
+            // Header Banner
             doc.setFillColor(18, 15, 13);
             doc.rect(0, 0, 210, 28, 'F');
             doc.setFont("helvetica", "bold");
@@ -1989,6 +2338,7 @@
             doc.setFontSize(9);
             doc.text(`Generated on: ${formatDate(new Date().toISOString().split('T')[0])}`, 14, 35);
 
+            // Summary Table
             doc.autoTable({
                 startY: 40,
                 head: [['Financial Metric', 'Amount (INR)']],
@@ -2000,6 +2350,83 @@
                 theme: 'grid',
                 headStyles: { fillColor: [245, 158, 11], textColor: [0, 0, 0] },
                 styles: { fontSize: 9 }
+            });
+
+            // 1. Dynamic Cost Estimations Table
+            let estList = occ.estimations || [];
+            let nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(245, 158, 11);
+            doc.text("1. Dynamic Cost Estimations", 14, nextY);
+
+            let estBody = estList.length > 0 ? estList.map((est, idx) => [idx + 1, est.name.replace(/[^\x00-\x7F]/g, ""), `Rs. ${est.cost}`]) : [['-', 'No Estimations Added', '-']];
+            doc.autoTable({
+                startY: nextY + 4,
+                head: [['#', 'Estimation Item / Expense Head', 'Estimated Cost']],
+                body: estBody,
+                theme: 'striped',
+                headStyles: { fillColor: [245, 158, 11] },
+                styles: { fontSize: 8 }
+            });
+
+            // 2. Cash Donors Table
+            let cashDonors = occ.entries.filter(e => e.type === 'income');
+            nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(16, 185, 129);
+            doc.text("2. Cash Donors (Income)", 14, nextY);
+
+            let cashBody = cashDonors.length > 0 ? cashDonors.map((ent, idx) => [idx + 1, formatDate(ent.date), ent.desc.replace(/[^\x00-\x7F]/g, ""), ent.paymentMode || 'Cash', `Rs. ${ent.amount}`]) : [['-', '-', 'No Cash Donors', '-', '-']];
+            doc.autoTable({
+                startY: nextY + 4,
+                head: [['#', 'Date', 'Donor / Description', 'Payment Mode', 'Amount']],
+                body: cashBody,
+                theme: 'striped',
+                headStyles: { fillColor: [16, 185, 129] },
+                styles: { fontSize: 8 }
+            });
+
+            // 3. Goods Donors Table
+            let goodsDonors = occ.entries.filter(e => e.type === 'item_donation');
+            nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(217, 119, 6);
+            doc.text("3. Goods / Item Donors", 14, nextY);
+
+            let goodsBody = goodsDonors.length > 0 ? goodsDonors.map((ent, idx) => {
+                let descText = ent.desc || "";
+                let donorMatch = descText.match(/Donor:\s*([^)]+)/);
+                let goodsMatch = descText.match(/Goods Donation:\s*(.*?)\s*\(Donor/);
+                let donorName = donorMatch ? donorMatch[1].trim() : "Unknown Donor";
+                let goodsDetails = goodsMatch ? goodsMatch[1].trim() : descText;
+                let estVal = ent.estValue ? `Rs. ${ent.estValue}` : 'N/A';
+                return [idx + 1, formatDate(ent.date), donorName.replace(/[^\x00-\x7F]/g, ""), goodsDetails.replace(/[^\x00-\x7F]/g, ""), estVal];
+            }) : [['-', '-', 'No Goods Donors', '-', '-']];
+
+            doc.autoTable({
+                startY: nextY + 4,
+                head: [['#', 'Date', 'Donor Name', 'Goods Details / Quantity', 'Est. Value']],
+                body: goodsBody,
+                theme: 'striped',
+                headStyles: { fillColor: [217, 119, 6] },
+                styles: { fontSize: 8 }
+            });
+
+            // 4. Expenses Table
+            let expensesList = occ.entries.filter(e => e.type === 'expense');
+            nextY = doc.lastAutoTable.finalY + 10;
+            doc.setFont("helvetica", "bold");
+            doc.setTextColor(239, 68, 68);
+            doc.text("4. Expenses", 14, nextY);
+
+            let expBody = expensesList.length > 0 ? expensesList.map((ent, idx) => [idx + 1, formatDate(ent.date), ent.desc.replace(/[^\x00-\x7F]/g, ""), `Rs. ${ent.amount}`]) : [['-', '-', 'No Expenses', '-']];
+            doc.autoTable({
+                startY: nextY + 4,
+                head: [['#', 'Date', 'Expense Description', 'Amount']],
+                body: expBody,
+                theme: 'striped',
+                headStyles: { fillColor: [239, 68, 68] },
+                styles: { fontSize: 8 }
             });
 
             doc.save(`${occ.name.replace(/\s+/g, '_')}_Accounts_Report.pdf`);
