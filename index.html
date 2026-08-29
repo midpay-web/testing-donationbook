@@ -692,7 +692,7 @@
 
     <!-- Master JavaScript Logic -->
     <script>
-        const _URL = "https://script.google.com/macros/s/AKfycbxvMPpj60jlTwJfslYZ4YVbG3dL_JheBAFuGVVif1SU2dKLdwE-yED5eUQqI72yczo/exechttps://script.google.com/macros/s/AKfycbySgrZwpAqmY4rNftm9rDfh9l2HQxKLObAYu14KRL_OCpCaZCrG20DAKR7QLeBrSX0/exec";
+        const _URL = "https://script.google.com/macros/s/AKfycbwdyAuN2XCy4gxYR9YadJE5MuEam5ozY72gD1fRKOGauuTCQ-ZRF9ONnchsN9Q12l4/exec";
         const DB_CURRENT = 'youth_current_user';
         const HOME_EXP_KEY = 'omnihub_home_expenses_master_final_v14';
         const SUB_CHECK_KEY = 'home_expenses_reg_timestamp';
@@ -711,42 +711,68 @@
             let targetMobile = currentUser.parentMobile || currentUser.mobile;
             if (!targetMobile) return;
 
-            let payload = { action: actionName, mobile: targetMobile };
-            if (payloadData) {
-                if (payloadData.tx) payload.tx = payloadData.tx;
-                if (payloadData.loan) payload.loan = payloadData.loan;
-                if (payloadData.emi) payload.emi = payloadData.emi;
-                if (payloadData.record) payload.record = payloadData.record;
-                if (payloadData.categoryType) payload.categoryType = payloadData.categoryType;
-            }
+            // హోమ్ డేటా మొత్తం నేరుగా పేలోడ్‌లో పంపబడుతుంది
+            let payload = { 
+                action: actionName, 
+                mobile: targetMobile,
+                transactions: homeAppData.transactions || [],
+                loans: homeAppData.loans || [],
+                emis: homeAppData.emis || [],
+                goals: homeAppData.goals || [],
+                shoppingList: homeAppData.shoppingList || []
+            };
 
             try {
-                await fetch(_URL, { 
+                let res = await fetch(_URL, { 
                     method: "POST", 
                     body: JSON.stringify(payload), 
                     headers: { "Content-Type": "text/plain;charset=utf-8" }, 
                     mode: "cors" 
                 });
+                let result = await res.json();
+                console.log("Sync Response:", result);
             } catch(e) { console.error("Sheet Sync Error:", e); }
         }
 
-        async function fetchHomeDataFromSheet() {
-            if (!currentUser || !currentUser.mobile) return;
-            let targetMobile = currentUser.parentMobile || currentUser.mobile;
-            try {
-                let res = await fetch(`${_URL}?action=getHomeData&mobile=${targetMobile}`, { method: "GET", headers: { "Accept": "application/json" }, mode: "cors" });
-                let result = await res.json();
-                if (result.status === "success" && result.homeData) {
-                    homeAppData.transactions = result.homeData.transactions || [];
-                    homeAppData.loans = result.homeData.loans || [];
-                    homeAppData.emis = result.homeData.emis || [];
-                    homeAppData.goals = result.homeData.goals || [];
-                    homeAppData.shoppingList = result.homeData.shoppingList || [];
-                    localStorage.setItem(HOME_EXP_KEY, JSON.stringify(homeAppData));
-                    renderHomeExpensesUI();
-                }
-            } catch(e) { console.error("Error fetching home data:", e); }
+        async function syncHomeDataToSheet(actionName, payloadData) {
+    if (!currentUser) return;
+    let targetMobile = currentUser.parentMobile || currentUser.mobile;
+    if (!targetMobile) {
+        alert("Error: Mobile number missing in currentUser!");
+        return;
+    }
+
+    let payload = { 
+        action: actionName, 
+        mobile: targetMobile,
+        transactions: homeAppData.transactions || [],
+        loans: homeAppData.loans || [],
+        emis: homeAppData.emis || [],
+        goals: homeAppData.goals || [],
+        shoppingList: homeAppData.shoppingList || []
+    };
+
+    try {
+        let res = await fetch(_URL, { 
+            method: "POST", 
+            body: JSON.stringify(payload), 
+            headers: { "Content-Type": "text/plain;charset=utf-8" }, 
+            mode: "cors" 
+        });
+        
+        let textResult = await res.text();
+        let result = JSON.parse(textResult);
+        
+        console.log("Sync Response:", result);
+        
+        if (result.status !== "success") {
+            alert("Google Sheet Error: " + (result.message || "Unknown error"));
         }
+    } catch(e) { 
+        console.error("Sheet Sync Error:", e); 
+        alert("Connection / Sync Failed: " + e.toString()); 
+    }
+}
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
@@ -1581,63 +1607,87 @@
         }
 
         async function registerOrganization() {
-            let orgName = document.getElementById('regOrgName').value.trim();
-            let adminName = document.getElementById('regAdminName').value.trim();
-            let email = document.getElementById('regEmail').value.trim();
-            let mobile = document.getElementById('regMobile').value.trim();
-            let pass = document.getElementById('regPassword').value.trim();
-            let mpin = document.getElementById('regMpin').value.trim();
-            let wantToSell = document.getElementById('wantToSellCheck').checked;
+    let adminName = document.getElementById('regAdminName').value.trim();
+    let mobile = document.getElementById('regMobile').value.trim();
+    let pass = document.getElementById('regPassword').value.trim();
+    let mpin = document.getElementById('regMpin').value.trim();
 
-            if(!adminName || !mobile || !pass || !mpin) {
-                showCustomAlert("తప్పనిసరి వివరాలు", "దయచేసి పేరు, మొబైల్ నంబర్, పాస్‌వర్డ్ మరియు M-PIN నింపండి!");
-                return;
-            }
+    // తప్పనిసరి ఫీల్డ్స్ మాత్రమే చెక్ చేయబడతాయి
+    if(!adminName || !mobile || !pass || !mpin) {
+        showCustomAlert("తప్పనిసరి వివరాలు", "దయచేసి పేరు, మొబైల్ నంబర్, పాస్‌వర్డ్ మరియు M-PIN నింపండి!");
+        return;
+    }
 
-            if(!orgName) {
-                orgName = adminName + "'s Hub";
-            }
+    // ఆప్షనల్ డేటా (యూజర్ ఇవ్వకపోతే ఖాళీగా ఉండిపోతుంది)
+    let orgName = document.getElementById('regOrgName').value.trim() || (adminName + "'s Hub");
+    let email = document.getElementById('regEmail').value.trim() || "";
 
-            let shopName = wantToSell ? document.getElementById('regShopName').value.trim() : "";
-            let shopWhatsApp = wantToSell ? document.getElementById('regWhatsApp').value.trim() : "";
-            let gstPan = wantToSell ? document.getElementById('regGstPan').value.trim() : "";
+    let wantToSell = document.getElementById('wantToSellCheck').checked;
+    let shopName = wantToSell ? (document.getElementById('regShopName').value.trim() || "") : "";
+    let shopWhatsApp = wantToSell ? (document.getElementById('regWhatsApp').value.trim() || "") : "";
+    let gstPan = wantToSell ? (document.getElementById('regGstPan').value.trim() || "") : "";
 
-            let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
-            let existingMainUser = allLocalOrgs.find(o => o.mobile === mobile);
-            if(existingMainUser) {
-                showCustomAlert("రిజిస్ట్రేషన్ నిరాకరించబడింది", "ఈ మొబైల్ నంబర్‌తో ఇప్పటికే అకౌంట్ రిజిస్టర్ చేయబడి ఉంది!");
-                return;
-            }
+    let allLocalOrgs = JSON.parse(localStorage.getItem('all_registered_orgs_cache')) || [];
+    let existingMainUser = allLocalOrgs.find(o => o.mobile === mobile);
+    if(existingMainUser) {
+        showCustomAlert("రిజిస్ట్రేషన్ నిరాకరించబడింది", "ఈ మొబైల్ నంబర్‌తో ఇప్పటికే అకౌంట్ రిజిస్టర్ చేయబడి ఉంది!");
+        return;
+    }
 
-            showLoader();
-            let newOrgObj = { orgName, adminName, email, mobile, pass, mpin, isMainAdmin: true, wantToSell, shopName, shopWhatsApp, gstPan, registrationDate: new Date().toLocaleString(), occasions: [], members: [] };
+    showLoader();
+    
+    let now = new Date();
+    let currentRegDate = now.toLocaleDateString('en-IN');
+    let currentRegTime = now.toLocaleTimeString('en-IN');
 
-            allLocalOrgs.push(newOrgObj);
-            localStorage.setItem('all_registered_orgs_cache', JSON.stringify(allLocalOrgs));
+    let newOrgObj = { 
+        orgName, 
+        adminName, 
+        email, 
+        mobile, 
+        pass, 
+        mpin, 
+        isMainAdmin: true, 
+        wantToSell, 
+        shopName, 
+        shopWhatsApp, 
+        gstPan, 
+        registrationDate: currentRegDate, 
+        registrationTime: currentRegTime,
+        occasions: [], 
+        members: [] 
+    };
 
-            let payload = {
-                action: "register",
-                orgName, adminName, email, mobile, pass, mpin,
-                wantToSell: wantToSell,
-                shopName: shopName,
-                shopWhatsApp: shopWhatsApp,
-                gstPan: gstPan,
-                userData: newOrgObj
-            };
+    allLocalOrgs.push(newOrgObj);
+    localStorage.setItem('all_registered_orgs_cache', JSON.stringify(allLocalOrgs));
 
-            try {
-                let res = await fetch(_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }, mode: "cors" });
-                let result = await res.json();
-                hideLoader();
-                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
-                switchView('loginView'); 
-            } catch(e) { 
-                hideLoader(); 
-                show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ రిజిస్టర్ అయింది. లాగిన్ అవ్వండి."); 
-                switchView('loginView'); 
-            }
-        }
+    let payload = {
+        action: "register",
+        orgName, 
+        adminName, 
+        email, 
+        mobile, 
+        pass, 
+        mpin,
+        wantToSell,
+        shopName,
+        shopWhatsApp,
+        gstPan,
+        userData: newOrgObj
+    };
 
+    try {
+        let res = await fetch(_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }, mode: "cors" });
+        let result = await res.json();
+        hideLoader();
+        show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ విజయవంతంగా సృష్టించబడింది. లాగిన్ అవ్వండి."); 
+        switchView('loginView'); 
+    } catch(e) { 
+        hideLoader(); 
+        show3DSuccessModal("రిజిస్ట్రేషన్ విజయవంతం!", "మీ అకౌంట్ విజయవంతంగా సృష్టించబడింది. లాగిన్ అవ్వండి."); 
+        switchView('loginView'); 
+    }
+}
         async function loginUser() {
             let mobile = document.getElementById('loginMobile').value.trim();
             let pass = document.getElementById('loginPassword').value.trim();
@@ -1834,7 +1884,30 @@
                 renderOccasions();
             } else { switchView('registerView'); }
         }
-
+async function fetchHomeDataFromSheet() {
+            if (!currentUser || !currentUser.mobile) return;
+            let targetMobile = currentUser.parentMobile || currentUser.mobile;
+            try {
+                let res = await fetch(`${_URL}?action=getHomeData&mobile=${targetMobile}`, { 
+                    method: "GET", 
+                    headers: { "Accept": "application/json" }, 
+                    mode: "cors" 
+                });
+                let result = await res.json();
+                if (result.status === "success" && result.homeData) {
+                    homeAppData.transactions = result.homeData.transactions || [];
+                    homeAppData.loans = result.homeData.loans || [];
+                    homeAppData.emis = result.homeData.emis || [];
+                    homeAppData.goals = result.homeData.goals || [];
+                    homeAppData.shoppingList = result.homeData.shoppingList || [];
+                    
+                    localStorage.setItem(HOME_EXP_KEY, JSON.stringify(homeAppData));
+                    renderHomeExpensesUI();
+                }
+            } catch(e) { 
+                console.error("Error fetching home data:", e); 
+            }
+        }
         async function syncUserDataWithSheet() {
             if(!currentUser || !currentUser.isMainAdmin) return;
             let payload = { action: "update", mobile: currentUser.mobile, userData: currentUser };
