@@ -22,7 +22,6 @@
         .moving-border { border-width: 1.5px; border-style: solid; border-color: rgba(245, 158, 11, 0.3); animation: glowingBorder 4s infinite linear; }
         .glow-card { background: rgba(25, 20, 16, 0.90); backdrop-filter: blur(12px); }
 
-        /* Enhanced 3D Modal Effect */
         .modal-3d-effect {
             transform: perspective(1000px) rotateX(1deg);
             box-shadow: 0 25px 60px -15px rgba(245, 158, 11, 0.35), 0 0 30px rgba(0, 0, 0, 0.8);
@@ -45,7 +44,6 @@
             animation: textFadeCycle 6s infinite;
         }
 
-        /* Floating WhatsApp Button Styling */
         .whatsapp-float {
             background-color: #25d366;
             color: white;
@@ -60,19 +58,15 @@
             text-decoration: none;
             transition: all 0.3s ease;
         }
-        .whatsapp-float:hover {
-            background-color: #20ba5a;
-            transform: scale(1.05);
-        }
+        .whatsapp-float:hover { background-color: #20ba5a; transform: scale(1.05); }
 
-        /* Hide scrollbar for clean horizontal categories scroll */
         .no-scrollbar::-webkit-scrollbar { display: none; }
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col items-center antialiased pb-12">
 
-    <!-- Header Section (Before Login) - STRICTLY ENGLISH -->
+    <!-- Header Section (Before Login) -->
     <header id="mainHeader" class="w-full max-w-md bg-[#120f0d] text-white py-3 px-4 sticky top-0 z-45 border-b border-[#f59e0b]/20 flex items-center justify-between shadow-xl">
         <div class="flex items-center gap-2">
             <img src="https://cdn.corenexis.com/f/GoZcxpTtYHf.png" alt="Logo" class="w-8 h-8 rounded-full object-cover border border-[#f59e0b]">
@@ -83,7 +77,7 @@
         </div>
     </header>
 
-    <!-- Logged-in Smart Navigation Bar - STRICTLY ENGLISH -->
+    <!-- Logged-in Smart Navigation Bar -->
     <nav id="loggedNavMenu" class="w-full max-w-md bg-[#120f0d] text-white py-2.5 px-3 sticky top-0 z-45 border-b border-[#f59e0b]/20 hidden flex justify-between items-center text-xs shadow-xl">
         <div id="navButtonsContainer" class="flex items-center gap-1.5 overflow-x-auto">
             <button id="navBtnDashboard" onclick="openDashboardModule()" class="bg-stone-900 text-white font-bold px-2.5 py-1 rounded-xl cursor-pointer border border-stone-800 transition-all">🏛️ Donation Book</button>
@@ -100,7 +94,7 @@
         <div id="registerView" class="page-view space-y-4 py-1">
             <div class="text-center space-y-1">
                 <h1 class="title-font text-2xl font-black text-[#f59e0b] tracking-wide">Register (నమోదు)</h1>
-                <p class="text-xs text-stone-400">Create your account with WhatsApp OTP</p>
+                <p class="text-xs text-stone-400">Create your account</p>
             </div>
 
             <div class="space-y-3 text-xs">
@@ -120,16 +114,10 @@
                 </div>
 
                 <div class="glow-card p-3 rounded-2xl moving-border space-y-2 shadow-xl">
-                    <label class="text-[11px] text-[#f59e0b] font-bold block">Mobile Number (మొబైల్ నంబర్ - WhatsApp OTP)</label>
+                    <label class="text-[11px] text-[#f59e0b] font-bold block">Mobile Number (మొబైల్ నంబర్)</label>
                     <div class="flex gap-2">
-                        <input type="tel" id="regMobile" oninput="handleMobileInput(this.value)" placeholder="Enter 10-digit mobile number" maxlength="10" class="w-full bg-transparent text-white outline-none placeholder-stone-600 text-xs">
-                        <button type="button" onclick="sendWhatsAppOtp()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3 py-1.5 rounded-xl cursor-pointer text-[10px] shrink-0">Send OTP</button>
+                        <input type="tel" id="regMobile" placeholder="Enter 10-digit mobile number" maxlength="10" class="w-full bg-transparent text-white outline-none placeholder-stone-600 text-xs">
                     </div>
-                    <div id="otpBoxContainer" class="hidden pt-2 border-t border-stone-800 space-y-2">
-                        <input type="text" id="regOtpInput" placeholder="Enter 4-digit WhatsApp OTP" maxlength="4" class="w-full p-2 rounded-xl bg-stone-950 text-white text-center font-bold tracking-widest text-xs border border-stone-800">
-                        <button type="button" onclick="verifyWhatsAppOtp()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 rounded-xl cursor-pointer text-xs">Verify OTP</button>
-                    </div>
-                    <span id="otpStatusText" class="text-[10px] text-stone-400 block">Status: Not Verified</span>
                 </div>
 
                 <div class="glow-card p-3 rounded-2xl moving-border space-y-1 shadow-xl">
@@ -463,7 +451,7 @@
 
     </main>
 
-    <!-- Floating WhatsApp Support Button (Mobile Friendly & Always Visible After Login) -->
+    <!-- Floating WhatsApp Support Button (Always Visible After Login) -->
     <div id="floatingWhatsAppBtn" class="fixed bottom-20 right-4 z-50 hidden">
         <button onclick="openWhatsAppSupport()" class="whatsapp-float">
             <svg class="w-6 h-6 fill-current text-white" viewBox="0 0 24 24">
@@ -480,6 +468,7 @@
             <button onclick="closeMonthlyComparisonWindow()" class="bg-stone-800 text-white font-bold px-3 py-1 rounded-xl text-xs cursor-pointer">← Back</button>
         </div>
 
+        <!-- Compare Period Selector Tabs (1M, 2M, 3M, 4M, 6M) -->
         <div class="glow-card p-2 rounded-2xl moving-border flex justify-around text-[10px] font-bold shadow-xl">
             <button onclick="setComparePeriod(1)" id="periodBtn1" class="px-2.5 py-1.5 rounded bg-[#f59e0b] text-stone-950">1 Month</button>
             <button onclick="setComparePeriod(2)" id="periodBtn2" class="px-2.5 py-1.5 rounded bg-stone-900 text-stone-300">2 Months</button>
@@ -1523,34 +1512,14 @@
                 `;
             }
 
-            let divFactor = Math.max(1, currentComparePeriod - 1);
-            let avgPrevInc = Math.round(prevInc / divFactor);
-            let avgPrevExp = Math.round(prevExp / divFactor);
-            let prevSav = avgPrevInc - avgPrevExp;
-
-            let totalDebt = (homeAppData.loans || []).reduce((s, l) => s + Number(l.totalDues), 0);
-            let totalEmi = (homeAppData.emis || []).reduce((s, e) => s + Number(e.monthlyAmt), 0);
-
-            let directionText = "➡️ Stable (స్థిరంగా ఉంది)";
-            let directionColor = "text-amber-400";
-            if (curSav > prevSav && curExp <= avgPrevExp) {
-                directionText = "🌱 Improving (ఆర్థికంగా మెరుగుపడుతున్నారు ↑)";
-                directionColor = "text-emerald-400";
-            } else if (curExp > curInc || curExp > avgPrevExp * 1.2) {
-                directionText = "⚠️ Needs Attention (ఖర్చులు పెరుగుతున్నాయి)";
-                directionColor = "text-red-400";
-            }
-
             let container = document.getElementById('monthlyComparisonWindowBody');
             container.innerHTML = `
                 <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 text-center space-y-1">
-                    <span class="text-[10px] text-stone-400 block">Your Financial Direction (${currentComparePeriod}M Trend)</span>
-                    <strong class="text-sm ${directionColor}">${directionText}</strong>
+                    <span class="text-[10px] text-stone-400 block">Financial Trend</span>
                 </div>
                 <div class="bg-stone-950 p-3 rounded-xl border border-stone-800 space-y-2">
                     <div class="flex justify-between items-center text-[10px]">
                         <strong class="text-[#f59e0b]">📈 Income vs Expense Bar Chart</strong>
-                        <div class="flex gap-2"><span class="text-emerald-400">■ Income</span><span class="text-red-400">■ Expense</span></div>
                     </div>
                     <div class="flex justify-between items-end pt-2 border-t border-stone-900">${monthlyBarsHTML}</div>
                 </div>
@@ -1563,19 +1532,9 @@
             let hasLoans = homeAppData.loans && homeAppData.loans.length > 0;
 
             if (!hasTransactions && !hasLoans) {
-                suggestionBox.innerHTML = `📌 <strong>గమనిక:</strong> ఇంకా ఎటువంటి లావాదేవీలు లేదా అప్పుల వివరాలు నమోదు చేయలేదు. మీరు డేటా ఎంటర్ చేసిన తర్వాత మీ కుటుంబ ఆర్థిక సేఫ్ జోన్ స్థితి ఇక్కడ చూపబడుతుంది.`;
+                suggestionBox.innerHTML = `📌 <strong>గమనిక:</strong> ఇంకా ఎటువంటి లావాదేవీలు లేదా అప్పుల వివరాలు నమోదు చేయలేదు.`;
             } else {
-                let totalLoansAmt = (homeAppData.loans || []).reduce((sum, l) => sum + Number(l.totalDues), 0);
-                let totalInc = homeAppData.transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0);
-                let estimatedNextMonthIncome = totalInc > 0 ? Math.round(totalInc / 3) : 25000;
-
-                if (totalLoansAmt > estimatedNextMonthIncome * 2) {
-                    suggestionBox.innerHTML = `🚨 <strong>సేఫ్ జోన్ హెచ్చరిక:</strong> మీ అప్పుల భారం (${totalLoansAmt}) మీ నెలవారీ ఆదాయం కంటే రెట్టింపు ఉంది. అదనపు ఖర్చులు పూర్తిగా నిలిపివేయండి!`;
-                } else if (totalLoansAmt > 0) {
-                    suggestionBox.innerHTML = `⚠️ <strong>ఫోర్‌కాస్ట్ నివేదిక:</strong> వచ్చే నెల అంచనా ఆదాయం ~₹${estimatedNextMonthIncome}. మీ ప్రస్తుత అప్పులు ₹${totalLoansAmt}. పొదుపుపై దృష్టి పెట్టండి.`;
-                } else {
-                    suggestionBox.innerHTML = `✅ <strong>ఫ్యామిలీ సేఫ్ జోన్:</strong> మీకు ఎటువంటి అప్పులు లేవు. మీ కుటుంబ ఆర్థిక పరిస్థితి చాలా పటిష్టంగా ఉంది!`;
-                }
+                suggestionBox.innerHTML = `✅ <strong>ఫ్యామిలీ సేఫ్ జోన్:</strong> మీ కుటుంబ ఆర్థిక పరిస్థితి చాలా పటిష్టంగా ఉంది!`;
             }
         }
 
@@ -1591,10 +1550,6 @@
 
             if(!orgName || !adminName || !mobile || !pass || !mpin) {
                 showCustomAlert("తప్పనిసరి వివరాలు", "దయచేసి అన్ని వివరాలు నింపండి!");
-                return;
-            }
-            if(!isPhoneVerified) {
-                showCustomAlert("వెరిఫికేషన్ అవసరం", "దయచేసి WhatsApp OTP ద్వారా మీ మొబైల్ నంబర్ వెరిఫై చేయండి!");
                 return;
             }
 
@@ -1707,7 +1662,6 @@
                 openDashboardModule();
                 document.getElementById('displayOrgName').innerText = currentUser.orgName;
 
-                // Show floating WhatsApp Support button after login
                 let floatBtn = document.getElementById('floatingWhatsAppBtn');
                 if(floatBtn) floatBtn.classList.remove('hidden');
 
